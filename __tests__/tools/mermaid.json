@@ -1,0 +1,27 @@
+{
+  "name": "generate_mermaid_diagram",
+  "description": "Generate mermaid diagram and chart with mermaid syntax dynamically. Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-inspired text definitions and a renderer to create and modify complex diagrams. The main purpose of Mermaid is to help documentation catch up with development.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "mermaid": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The mermaid diagram syntax used to be generated, such as, graph TD;\nA-->B;\nA-->C;\nB-->D;\nC-->D;."
+      },
+      "theme": {
+        "type": "string",
+        "enum": ["default", "base", "forest", "dark", "neutral"],
+        "description": "Theme for the diagram (optional). Default is 'default'.",
+        "default": "default"
+      },
+      "backgroundColor": {
+        "type": "string",
+        "description": "Background color for the diagram (optional). Default is 'white'.",
+        "default": "white"
+      }
+    },
+    "required": ["mermaid"],
+    "$schema": "http://json-schema.org/draft-07/schema#"
+  }
+}

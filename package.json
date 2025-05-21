@@ -1,0 +1,49 @@
+{
+  "name": "mcp-mermaid",
+  "description": "❤️ Generate mermaid diagram and chart with AI MCP dynamically.",
+  "version": "0.1.0",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "prebuild": "rm -rf build/*",
+    "build": "tsc && tsc-alias -p tsconfig.json",
+    "start": "npx @modelcontextprotocol/inspector node build/index.js",
+    "prepare": "husky && npm run build",
+    "prepublishOnly": "npm run build",
+    "test": "vitest"
+  },
+  "bin": {
+    "mcp-mermaid": "./build/index.js"
+  },
+  "files": ["build"],
+  "keywords": ["mcp", "mermaid", "data-visualization", "chart", "diagram"],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.4",
+    "mermaid-isomorphic": "^3.0.4",
+    "playwright": "^1.52.0",
+    "zod": "^3.25.16",
+    "zod-to-json-schema": "^3.24.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@modelcontextprotocol/inspector": "^0.12.0",
+    "@types/node": "^22.15.21",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "lint-staged": {
+    "*.{ts,js,json}": [
+      "biome check --write",
+      "biome format --write",
+      "biome lint"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hustcc/mcp-mermaid"
+  },
+  "license": "MIT"
+}
