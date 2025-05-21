@@ -63,15 +63,24 @@ function setupToolHandlers(server: Server): void {
           }
         }
 
-        const { mermaid } = args;
-        const { id, svg, screenshot } = await renderMermaid(mermaid as string);
+        const { mermaid, theme, backgroundColor } = args;
+        const { id, svg, screenshot } = await renderMermaid(
+          mermaid as string,
+          theme as string,
+          backgroundColor as string,
+        );
 
         return {
           content: screenshot
             ? [
                 {
                   type: "image",
-                  text: screenshot.toString("base64"),
+                  data: screenshot.toString("base64"),
+                  mimeType: "image/png",
+                },
+                {
+                  type: "text",
+                  text: svg,
                 },
               ]
             : [

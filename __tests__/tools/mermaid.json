@@ -11,15 +11,14 @@
       },
       "theme": {
         "type": "string",
-        "enum": ["default", "forest", "dark", "neutral"],
+        "enum": ["default", "base", "forest", "dark", "neutral"],
         "description": "Theme for the diagram (optional). Default is 'default'.",
         "default": "default"
       },
-      "outputType": {
+      "backgroundColor": {
         "type": "string",
-        "enum": ["svg", "png"],
-        "description": "The output type of the diagram. Can be 'svg' or 'png'. Default is 'png'.",
-        "default": "png"
+        "description": "Background color for the diagram (optional). Default is 'white'.",
+        "default": "white"
       }
     },
     "required": ["mermaid"],

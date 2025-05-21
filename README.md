@@ -42,6 +42,46 @@ On Window system:
 Also, you can use it on aliyun, modelscope, glama.ai, smithery.ai or others with HTTP, SSE Protocol.
 
 
+## 🚰 Run with SSE or Streamable transport
+
+Install the package globally.
+
+```bash
+npm install -g mcp-mermaid
+```
+
+Run the server with your preferred transport option:
+
+```bash
+# For SSE transport (default endpoint: /sse)
+mcp-mermaid -t sse
+
+# For Streamable transport with custom endpoint
+mcp-mermaid -t streamable
+```
+
+Then you can access the server at:
+- SSE transport: `http://localhost:3033/sse`
+- Streamable transport: `http://localhost:3033/mcp`
+
+
+## 🎮 CLI Options
+
+You can also use the following CLI options when running the MCP server. Command options by run cli with `-h`.
+
+```plain
+MCP Mermaid CLI
+
+Options:
+  --transport, -t  Specify the transport protocol: "stdio", "sse", or "streamable" (default: "stdio")
+  --port, -p       Specify the port for SSE or streamable transport (default: 3033)
+  --endpoint, -e   Specify the endpoint for the transport:
+                    - For SSE: default is "/sse"
+                    - For streamable: default is "/mcp"
+  --help, -h       Show this help message
+```
+
+
 ## 🔨 Development
 
 Install dependencies:

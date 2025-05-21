@@ -11,17 +11,17 @@ B-->D;
 C-->D;.`)
     .nonempty({ message: "The mermaid string cannot be empty." }),
   theme: z
-    .enum(["default", "forest", "dark", "neutral"])
+    .enum(["default", "base", "forest", "dark", "neutral"])
     .describe("Theme for the diagram (optional). Default is 'default'.")
     .optional()
     .default("default"),
-  outputType: z
-    .enum(["svg", "png"])
+  backgroundColor: z
+    .string()
     .describe(
-      "The output type of the diagram. Can be 'svg' or 'png'. Default is 'png'.",
+      "Background color for the diagram (optional). Default is 'white'.",
     )
     .optional()
-    .default("png"),
+    .default("white"),
 });
 
 export const tool = {
