@@ -1,20 +1,20 @@
-# MCP Mermaid ![](https://badge.mcpx.dev?type=server 'MCP Server')  [![build](https://github.com/hustcc/mcp-mermind/actions/workflows/build.yml/badge.svg)](https://github.com/hustcc/mcp-mermind/actions/workflows/build.yml) [![npm Version](https://img.shields.io/npm/v/mcp-mermind.svg)](https://www.npmjs.com/package/mcp-mermind) [![smithery badge](https://smithery.ai/badge/@hustcc/mcp-mermind)](https://smithery.ai/server/@hustcc/mcp-mermind) [![npm License](https://img.shields.io/npm/l/mcp-mermind.svg)](https://www.npmjs.com/package/mcp-mermind)
+# MCP Mermaid ![](https://badge.mcpx.dev?type=server 'MCP Server')  [![build](https://github.com/hustcc/mcp-mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/hustcc/mcp-mermaid/actions/workflows/build.yml) [![npm Version](https://img.shields.io/npm/v/mcp-mermaid.svg)](https://www.npmjs.com/package/mcp-mermaid) [![smithery badge](https://smithery.ai/badge/@hustcc/mcp-mermaid)](https://smithery.ai/server/@hustcc/mcp-mermaid) [![npm License](https://img.shields.io/npm/l/mcp-mermaid.svg)](https://www.npmjs.com/package/mcp-mermaid)
 
 ❤️ Generate [mermaid](https://mermaid.js.org/) diagram and chart with AI MCP dynamically.
 
 
 ## 🤖 Usage
 
-To use with `Desktop APP`, such as Claude, VSCode, [Cline](https://cline.bot/mcp-marketplace), Cherry Studio, and so on, add the  MCP server config below. On Mac system:
+To use with `Desktop APP`, such as Claude, VSCode, Cline, Cherry Studio, and so on, add the  MCP server config below. On Mac system:
 
 ```json
 {
   "mcpServers": {
-    "mcp-mermind": {
+    "mcp-mermaid": {
       "command": "npx",
       "args": [
         "-y",
-        "mcp-mermind"
+        "mcp-mermaid"
       ]
     }
   }
@@ -26,18 +26,20 @@ On Window system:
 ```json
 {
   "mcpServers": {
-    "mcp-mermind": {
+    "mcp-mermaid": {
       "command": "cmd",
       "args": [
         "/c",
         "npx",
         "-y",
-        "mcp-mermind"
+        "mcp-mermaid"
       ]
     }
   }
 }
 ```
+
+Also, you can use it on aliyun, modelscope, glama.ai, smithery.ai or others with HTTP, SSE Protocol.
 
 
 ## 🔨 Development
