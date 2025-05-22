@@ -22,6 +22,13 @@ C-->D;.`)
     )
     .optional()
     .default("white"),
+  outputType: z
+    .enum(["svg", "png"])
+    .describe(
+      "The output type of the diagram. Can be 'svg' or 'png'. Default is 'png'.",
+    )
+    .optional()
+    .default("png"),
 });
 
 export const tool = {

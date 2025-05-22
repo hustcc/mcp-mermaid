@@ -19,6 +19,12 @@
         "type": "string",
         "description": "Background color for the diagram (optional). Default is 'white'.",
         "default": "white"
+      },
+      "outputType": {
+        "type": "string",
+        "enum": ["svg", "png"],
+        "description": "The output type of the diagram. Can be 'svg' or 'png'. Default is 'png'.",
+        "default": "png"
       }
     },
     "required": ["mermaid"],
