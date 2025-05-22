@@ -1,7 +1,7 @@
 {
   "name": "mcp-mermaid",
   "description": "❤️ Generate mermaid diagram and chart with AI MCP dynamically.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "build/index.js",
   "type": "module",
   "scripts": {

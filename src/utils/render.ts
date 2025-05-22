@@ -15,7 +15,7 @@ export async function renderMermaid(
   backgroundColor = "white",
 ): Promise<RenderResult> {
   const renderer = createMermaidRenderer();
-  const r = await renderer([mermaid], {
+  const r = await renderer([mermaid.replace(/\\n/g, "\n")], {
     // Image is needed.
     screenshot: true,
     containerStyle: {

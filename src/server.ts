@@ -20,7 +20,7 @@ export function createServer(): Server {
   const server = new Server(
     {
       name: "mcp-mermaid",
-      version: "0.1.0",
+      version: "0.1.2",
     },
     {
       capabilities: {
@@ -63,7 +63,7 @@ function setupToolHandlers(server: Server): void {
           }
         }
 
-        const { mermaid, theme, backgroundColor } = args;
+        const { mermaid, theme, backgroundColor, outputType = "png" } = args;
         const { id, svg, screenshot } = await renderMermaid(
           mermaid as string,
           theme as string,
@@ -71,24 +71,18 @@ function setupToolHandlers(server: Server): void {
         );
 
         return {
-          content: screenshot
-            ? [
-                {
+          content: [
+            outputType === "svg"
+              ? {
+                  type: "text",
+                  text: svg,
+                }
+              : {
                   type: "image",
-                  data: screenshot.toString("base64"),
+                  data: screenshot?.toString("base64"),
                   mimeType: "image/png",
                 },
-                {
-                  type: "text",
-                  text: svg,
-                },
-              ]
-            : [
-                {
-                  type: "text",
-                  text: svg,
-                },
-              ],
+          ],
         };
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } catch (error: any) {
