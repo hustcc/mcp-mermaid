@@ -52,15 +52,13 @@ function setupToolHandlers(server: Server): void {
     if (request.params.name === tool.name) {
       try {
         const args = request.params.arguments || {};
-        if (schema) {
-          // Use safeParse instead of parse and try-catch.
-          const result = schema.safeParse(args);
-          if (!result.success) {
-            throw new McpError(
-              ErrorCode.InvalidParams,
-              `Invalid parameters: ${result.error.message}`,
-            );
-          }
+        // Use safeParse instead of parse and try-catch.
+        const result = schema.safeParse(args);
+        if (!result.success) {
+          throw new McpError(
+            ErrorCode.InvalidParams,
+            `Invalid parameters: ${result.error.message}`,
+          );
         }
 
         const { mermaid, theme, backgroundColor, outputType = "png" } = args;
@@ -70,18 +68,33 @@ function setupToolHandlers(server: Server): void {
           backgroundColor as string,
         );
 
+        if (outputType === "mermaid") {
+          return {
+            content: [
+              {
+                type: "text",
+                text: mermaid,
+              },
+            ],
+          };
+        }
+        if (outputType === "svg") {
+          return {
+            content: [
+              {
+                type: "text",
+                text: svg,
+              },
+            ],
+          };
+        }
         return {
           content: [
-            outputType === "svg"
-              ? {
-                  type: "text",
-                  text: svg,
-                }
-              : {
-                  type: "image",
-                  data: screenshot?.toString("base64"),
-                  mimeType: "image/png",
-                },
+            {
+              type: "image",
+              data: screenshot?.toString("base64"),
+              mimeType: "image/png",
+            },
           ],
         };
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>

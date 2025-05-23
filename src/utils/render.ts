@@ -22,7 +22,8 @@ export async function renderMermaid(
   backgroundColor = "white",
 ): Promise<RenderResult> {
   if (!renderer) renderer = createMermaidRenderer();
-  const r = await renderer([mermaid.replace(/\\n/g, "\n")], {
+  console.log("mermaid", `svg { background: ${backgroundColor}; }`);
+  const r = await renderer([mermaid], {
     // Image is needed.
     screenshot: true,
     css: `svg { background: ${backgroundColor}; }`,
