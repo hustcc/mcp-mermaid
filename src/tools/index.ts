@@ -23,9 +23,9 @@ C-->D;.`)
     .optional()
     .default("white"),
   outputType: z
-    .enum(["svg", "png"])
+    .enum(["png", "svg", "mermaid"])
     .describe(
-      "The output type of the diagram. Can be 'svg' or 'png'. Default is 'png'.",
+      "The output type of the diagram. Can be 'png', 'svg' or 'mermaid'. Default is 'png'.",
     )
     .optional()
     .default("png"),

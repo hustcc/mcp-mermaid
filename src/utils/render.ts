@@ -1,7 +1,14 @@
-/**
- * @description Render mermaid with puppeteer.
- */
-import { type RenderResult, createMermaidRenderer } from "mermaid-isomorphic";
+import * as path from "path";
+import * as fs from "fs";
+import * as os from "os";
+import {
+  type MermaidRenderer,
+  type RenderResult,
+  createMermaidRenderer,
+} from "mermaid-isomorphic";
+
+// Cache the renderer to avoid creating a new one every time.
+let renderer: MermaidRenderer;
 
 /**
  * Ref:
@@ -14,13 +21,15 @@ export async function renderMermaid(
   theme = "default",
   backgroundColor = "white",
 ): Promise<RenderResult> {
-  const renderer = createMermaidRenderer();
-  const r = await renderer([mermaid.replace(/\\n/g, "\n")], {
+  if (!renderer) renderer = createMermaidRenderer();
+  const cssContent = `svg { background: ${backgroundColor}; }`;
+  const cssTmpPath = path.join(os.tmpdir(), 'mermaid-tmp-css.css');
+  fs.writeFileSync(cssTmpPath, cssContent);
+
+  const r = await renderer([mermaid], {
     // Image is needed.
     screenshot: true,
-    containerStyle: {
-      background: backgroundColor,
-    },
+    css: cssTmpPath,
     mermaidConfig: {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       theme: theme as any,
