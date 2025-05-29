@@ -1,6 +1,6 @@
-/**
- * @description Render mermaid with puppeteer.
- */
+import * as path from "path";
+import * as fs from "fs";
+import * as os from "os";
 import {
   type MermaidRenderer,
   type RenderResult,
@@ -22,11 +22,14 @@ export async function renderMermaid(
   backgroundColor = "white",
 ): Promise<RenderResult> {
   if (!renderer) renderer = createMermaidRenderer();
-  console.log("mermaid", `svg { background: ${backgroundColor}; }`);
+  const cssContent = `svg { background: ${backgroundColor}; }`;
+  const cssTmpPath = path.join(os.tmpdir(), 'mermaid-tmp-css.css');
+  fs.writeFileSync(cssTmpPath, cssContent);
+
   const r = await renderer([mermaid], {
     // Image is needed.
     screenshot: true,
-    css: `svg { background: ${backgroundColor}; }`,
+    css: cssTmpPath,
     mermaidConfig: {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       theme: theme as any,
