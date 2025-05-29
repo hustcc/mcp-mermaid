@@ -1,16 +1,17 @@
 {
   "name": "mcp-mermaid",
   "description": "❤️ Generate mermaid diagram and chart with AI MCP dynamically.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "build/index.js",
   "type": "module",
   "scripts": {
+    "test": "vitest",
     "prebuild": "rm -rf build/*",
     "build": "tsc && tsc-alias -p tsconfig.json",
     "start": "npx @modelcontextprotocol/inspector node build/index.js",
     "prepare": "husky && npm run build",
     "prepublishOnly": "npm run build",
-    "test": "vitest"
+    "postinstall": "playwright install --with-deps chromium"
   },
   "bin": {
     "mcp-mermaid": "./build/index.js"
