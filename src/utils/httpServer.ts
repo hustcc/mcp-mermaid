@@ -79,12 +79,18 @@ function setupCleanupHandlers(
 
     httpServer.close(() => {
       console.log("Server closed");
+      // exit after cleanup
       process.exit(0);
     });
   };
 
+  // Attach signal handlers and remove them on server close to avoid leaks
   process.on("SIGINT", cleanup);
   process.on("SIGTERM", cleanup);
+  httpServer.once("close", () => {
+    process.removeListener("SIGINT", cleanup);
+    process.removeListener("SIGTERM", cleanup);
+  });
 }
 
 /**

@@ -32,10 +32,12 @@ export function createServer(): Server {
   setupToolHandlers(server);
 
   server.onerror = (error) => console.error("[MCP Error]", error);
-  process.on("SIGINT", async () => {
+  // Graceful shutdown on Ctrl-C, remove listener afterwards to prevent leaks
+  const sigintHandler = async () => {
     await server.close();
     process.exit(0);
-  });
+  };
+  process.once("SIGINT", sigintHandler);
 
   return server;
 }
