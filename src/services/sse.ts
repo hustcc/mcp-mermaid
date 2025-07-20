@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { type RequestHandlers, createBaseHttpServer } from "../utils";
+import { Logger } from "../utils/logger";
 
 export const startSSEMcpServer = async (
   server: Server,
@@ -36,7 +37,7 @@ export const startSSEMcpServer = async (
         try {
           await server.close();
         } catch (error) {
-          console.error("Error closing server:", error);
+          Logger.error("Error closing server", error);
         }
 
         delete activeTransports[transport.sessionId];
@@ -52,8 +53,7 @@ export const startSSEMcpServer = async (
         });
       } catch (error) {
         if (!closed) {
-          console.error("Error connecting to server:", error);
-
+          Logger.error("Error connecting to server", error);
           res.writeHead(500).end("Error connecting to server");
         }
       }
@@ -93,9 +93,12 @@ export const startSSEMcpServer = async (
   const cleanup = () => {
     // Close all active transports
     for (const transport of Object.values(activeTransports)) {
-      transport.close();
+      try {
+        transport.close();
+      } catch (error) {
+        Logger.error("Error closing SSE transport", error);
+      }
     }
-    server.close();
   };
 
   // Create the HTTP server using our factory

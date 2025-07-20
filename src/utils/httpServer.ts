@@ -1,5 +1,7 @@
 import http from "node:http";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { Logger } from "./logger";
+import { shutdownManager } from "./shutdownManager";
 
 /**
  * Interface for request handlers that will be passed to the server factory
@@ -33,7 +35,7 @@ function handleCORS(req: IncomingMessage, res: ServerResponse): void {
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
       res.setHeader("Access-Control-Allow-Headers", "*");
     } catch (error) {
-      console.error("Error parsing origin:", error);
+      Logger.error("Error parsing origin", error);
     }
   }
 }
@@ -65,31 +67,33 @@ function handleCommonEndpoints(
 }
 
 /**
- * Sets up signal handlers for graceful shutdown
+ * Sets up cleanup handlers for the HTTP server
  */
 function setupCleanupHandlers(
   httpServer: http.Server,
   customCleanup?: () => void,
 ): void {
-  const cleanup = () => {
-    console.log("\nClosing server...");
-
-    // Execute custom cleanup if provided
-    if (customCleanup) customCleanup();
-
-    httpServer.close(() => {
-      console.log("Server closed");
-      // exit after cleanup
-      process.exit(0);
+  // Register HTTP server cleanup
+  shutdownManager.registerCleanup(() => {
+    return new Promise<void>((resolve) => {
+      httpServer.close(() => {
+        Logger.cleanup("HTTP server closed");
+        resolve();
+      });
     });
-  };
+  });
 
-  // Attach signal handlers and remove them on server close to avoid leaks
-  process.on("SIGINT", cleanup);
-  process.on("SIGTERM", cleanup);
+  // Register custom cleanup if provided
+  if (customCleanup) {
+    shutdownManager.registerCleanup(customCleanup);
+  }
+
+  // Setup signal handlers only once
+  shutdownManager.setupSignalHandlers();
+
   httpServer.once("close", () => {
-    process.removeListener("SIGINT", cleanup);
-    process.removeListener("SIGTERM", cleanup);
+    process.removeAllListeners("SIGINT");
+    process.removeAllListeners("SIGTERM");
   });
 }
 
@@ -101,16 +105,7 @@ function logServerStartup(
   port: number,
   endpoint: string,
 ): void {
-  const serverUrl = `http://localhost:${port}${endpoint}`;
-  const healthUrl = `http://localhost:${port}/health`;
-  const pingUrl = `http://localhost:${port}/ping`;
-
-  console.log(
-    `${serverType} running on: \x1b[32m\u001B[4m${serverUrl}\u001B[0m\x1b[0m`,
-  );
-  console.log("\nTest endpoints:");
-  console.log(`• Health check: \u001B[4m${healthUrl}\u001B[0m`);
-  console.log(`• Ping test: \u001B[4m${pingUrl}\u001B[0m`);
+  Logger.serverStartup(serverType, port, endpoint);
 }
 
 /**
@@ -138,7 +133,7 @@ export function createBaseHttpServer(
     try {
       await handlers.handleRequest(req, res);
     } catch (error) {
-      console.error(`Error in ${handlers.serverType} request handler:`, error);
+      Logger.error(`Error in ${handlers.serverType} request handler`, error);
       res.writeHead(500).end("Internal Server Error");
     }
   });

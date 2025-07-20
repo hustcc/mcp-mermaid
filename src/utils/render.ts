@@ -1,6 +1,6 @@
-import * as path from "path";
-import * as fs from "fs";
-import * as os from "os";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import {
   type MermaidRenderer,
   type RenderResult,
@@ -23,7 +23,7 @@ export async function renderMermaid(
 ): Promise<RenderResult> {
   if (!renderer) renderer = createMermaidRenderer();
   const cssContent = `svg { background: ${backgroundColor}; }`;
-  const cssTmpPath = path.join(os.tmpdir(), 'mermaid-tmp-css.css');
+  const cssTmpPath = path.join(os.tmpdir(), "mermaid-tmp-css.css");
   fs.writeFileSync(cssTmpPath, cssContent);
 
   const r = await renderer([mermaid], {

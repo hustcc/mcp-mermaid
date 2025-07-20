@@ -12,6 +12,9 @@ import {
 } from "./services";
 import { schema, tool } from "./tools";
 import { renderMermaid } from "./utils";
+import { createServerCleanup } from "./utils/cleanupHelpers";
+import { Logger } from "./utils/logger";
+import { shutdownManager } from "./utils/shutdownManager";
 
 /**
  * Creates and configures an MCP server for mermaid generation.
@@ -31,13 +34,10 @@ export function createServer(): Server {
 
   setupToolHandlers(server);
 
-  server.onerror = (error) => console.error("[MCP Error]", error);
-  // Graceful shutdown on Ctrl-C, remove listener afterwards to prevent leaks
-  const sigintHandler = async () => {
-    await server.close();
-    process.exit(0);
-  };
-  process.once("SIGINT", sigintHandler);
+  server.onerror = (error) => Logger.error("MCP Error", error);
+
+  // Register server cleanup with shutdown manager
+  shutdownManager.registerCleanup(createServerCleanup(server));
 
   return server;
 }

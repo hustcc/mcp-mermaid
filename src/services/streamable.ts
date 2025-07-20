@@ -12,6 +12,7 @@ import {
   createBaseHttpServer,
   getBody,
 } from "../utils";
+import { Logger } from "../utils/logger";
 
 export const startHTTPStreamableServer = async (
   createServer: () => Server,
@@ -82,7 +83,7 @@ export const startHTTPStreamableServer = async (
               try {
                 await server?.close();
               } catch (error) {
-                console.error("Error closing server:", error);
+                Logger.error("Error closing server", error);
               }
 
               // delete used transport and server to avoid memory leak.
@@ -126,7 +127,7 @@ export const startHTTPStreamableServer = async (
         // Handle the request if the server is already created.
         await transport.handleRequest(req, res, body);
       } catch (error) {
-        console.error("Error handling request:", error);
+        Logger.error("Error handling request", error);
         res.setHeader("Content-Type", "application/json");
         res.writeHead(500).end(
           JSON.stringify({
@@ -204,8 +205,11 @@ export const startHTTPStreamableServer = async (
   // Custom cleanup for streamable server
   const cleanup = () => {
     for (const { server, transport } of Object.values(activeTransports)) {
-      transport.close();
-      server.close();
+      try {
+        transport.close();
+      } catch (error) {
+        Logger.error("Error closing streamable transport", error);
+      }
     }
   };
 
