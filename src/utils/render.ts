@@ -11,6 +11,20 @@ import {
 let renderer: MermaidRenderer;
 
 /**
+ * Get font family for Mermaid diagrams
+ */
+function getFontFamily(): string {
+  // Allow custom font family override
+  const customFont = process.env.MERMAID_FONT_FAMILY;
+  if (customFont) {
+    return customFont;
+  }
+
+  // Simple, reliable font stack with Chinese support
+  return '"Noto Sans CJK SC", "Arial", "Helvetica", sans-serif';
+}
+
+/**
  * Ref:
  * - https://github.com/mermaid-js/mermaid-cli/blob/master/src/index.js
  * - https://github.com/remcohaszing/mermaid-isomorphic
@@ -21,7 +35,17 @@ export async function renderMermaid(
   theme = "default",
   backgroundColor = "white",
 ): Promise<RenderResult> {
-  if (!renderer) renderer = createMermaidRenderer();
+  if (!renderer) {
+    // Configure Playwright to use system Chromium in Docker
+    const launchOptions: any = {};
+    if (process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH) {
+      launchOptions.executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+    }
+    
+    renderer = createMermaidRenderer({
+      launchOptions,
+    });
+  }
   const cssContent = `svg { background: ${backgroundColor}; }`;
   const cssTmpPath = path.join(os.tmpdir(), "mermaid-tmp-css.css");
   fs.writeFileSync(cssTmpPath, cssContent);
@@ -33,6 +57,7 @@ export async function renderMermaid(
     mermaidConfig: {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       theme: theme as any,
+      fontFamily: getFontFamily(),
     },
   });
   const r0 = r[0] as PromiseSettledResult<RenderResult>;
