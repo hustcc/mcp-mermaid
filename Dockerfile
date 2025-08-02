@@ -1,33 +1,16 @@
-FROM node:lts-alpine
+FROM node:lts-bookworm-slim
 
 WORKDIR /app
 
-# Install system dependencies for Playwright and font support
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    fontconfig \
-    font-noto-cjk
-
-# Tell Playwright to use the installed Chromium
-ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install --ignore-scripts
-
-# Manually install Playwright Node.js bindings without browsers (we use system chromium)
-RUN npx playwright install-deps || true
-
-# Copy application code
 COPY . .
 
-# Build the application
-RUN npm run build
+RUN npm install \
+    && npm run build \
+    && npx playwright install --with-deps chromium \
+    && apt-get clean \
+    && npm prune --omit=dev \
+    && npm cache clean --force \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt/*
 
-# Command will be provided by smithery.yaml
 CMD ["node", "build/index.js"]
