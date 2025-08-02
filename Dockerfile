@@ -1,18 +1,16 @@
-FROM node:lts-alpine
+FROM node:lts-bookworm-slim
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install --ignore-scripts
-
-# Copy application code
 COPY . .
 
-# Build the application
-RUN npm run build
+RUN npm install \
+    && npm run build \
+    && npx playwright install --with-deps chromium \
+    && apt-get clean \
+    && npm prune --omit=dev \
+    && npm cache clean --force \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt/*
 
-# Command will be provided by smithery.yaml
 CMD ["node", "build/index.js"]

@@ -1,0 +1,20 @@
+# Dependencies and build artifacts
+node_modules
+build
+dist
+
+# Development files
+.git
+.env*
+*.log
+
+# IDE and editor files
+.vscode
+.idea
+
+# Test and CI files
+.github
+test_*.js
+
+# Documentation
+README.md
