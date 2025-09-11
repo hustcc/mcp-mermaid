@@ -77,20 +77,12 @@ export const startHTTPStreamableServer = async (
           });
 
           // Handle the server close event.
-          transport.onclose = async () => {
+          transport.onclose = () => {
             const sid = transport.sessionId;
             if (sid && activeTransports[sid]) {
-              try {
-                await server?.close();
-              } catch (error) {
-                Logger.error("Error closing server", error);
-              }
-
-              // delete used transport and server to avoid memory leak.
               delete activeTransports[sid];
             }
           };
-
           // Create the server
           try {
             server = createServer();
