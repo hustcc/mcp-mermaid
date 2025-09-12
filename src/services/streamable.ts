@@ -77,9 +77,28 @@ export const startHTTPStreamableServer = async (
           });
 
           // Handle the server close event.
-          transport.onclose = () => {
+          let isTransportClosed = false;
+          let isServerClosed = false;
+          
+          transport.onclose = async () => {
+            if (isTransportClosed) {
+              Logger.warn("Transport already closed, skipping onclose handler to avoid infinite recursion");
+              return; // Prevent re-entrancy
+            };
+
+            isTransportClosed = true;
+          
             const sid = transport.sessionId;
             if (sid && activeTransports[sid]) {
+              // Optionally close the server, but guard against recursion
+              if (!isServerClosed) {
+                try {
+                  await server.close();
+                  isServerClosed = true;
+                } catch (error) {
+                  Logger.error("Error closing server", error);
+                }
+              }
               delete activeTransports[sid];
             }
           };
