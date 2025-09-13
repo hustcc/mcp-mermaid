@@ -1,110 +1,45 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import { type RequestHandlers, createBaseHttpServer } from "../utils";
-import { Logger } from "../utils/logger";
+import type { Request, Response } from "express";
+import express from "express";
 
 export const startSSEMcpServer = async (
   server: Server,
   endpoint = "/sse",
   port = 3033,
 ): Promise<void> => {
-  const activeTransports: Record<string, SSEServerTransport> = {};
+  const app = express();
+  app.use(express.json());
 
-  // Define the request handler for SSE-specific logic
-  const handleRequest: RequestHandlers["handleRequest"] = async (
-    req: IncomingMessage,
-    res: ServerResponse,
-  ) => {
-    if (!req.url) {
-      res.writeHead(400).end("No URL");
-      return;
-    }
+  const transports: Record<string, SSEServerTransport> = {};
 
-    const reqUrl = new URL(req.url, "http://localhost");
-
-    // Handle GET requests to the SSE endpoint
-    if (req.method === "GET" && reqUrl.pathname === endpoint) {
+  app.get(endpoint, async (req: Request, res: Response) => {
+    try {
       const transport = new SSEServerTransport("/messages", res);
-
-      activeTransports[transport.sessionId] = transport;
-
-      let closed = false;
-
-      res.on("close", async () => {
-        closed = true;
-
-        try {
-          await server.close();
-        } catch (error) {
-          Logger.error("Error closing server", error);
-        }
-
-        delete activeTransports[transport.sessionId];
-      });
-
-      try {
-        await server.connect(transport);
-
-        await transport.send({
-          jsonrpc: "2.0",
-          method: "sse/connection",
-          params: { message: "SSE Connection established" },
-        });
-      } catch (error) {
-        if (!closed) {
-          Logger.error("Error connecting to server", error);
-          res.writeHead(500).end("Error connecting to server");
-        }
-      }
-
-      return;
+      transports[transport.sessionId] = transport;
+      transport.onclose = () => delete transports[transport.sessionId];
+      await server.connect(transport);
+    } catch (error) {
+      if (!res.headersSent)
+        res.status(500).send("Error establishing SSE stream");
     }
+  });
 
-    // Handle POST requests to the messages endpoint
-    if (req.method === "POST" && req.url?.startsWith("/messages")) {
-      const sessionId = new URL(
-        req.url,
-        "https://example.com",
-      ).searchParams.get("sessionId");
+  app.post("/messages", async (req: Request, res: Response) => {
+    const sessionId = req.query.sessionId as string;
+    if (!sessionId) return res.status(400).send("Missing sessionId parameter");
 
-      if (!sessionId) {
-        res.writeHead(400).end("No sessionId");
-        return;
-      }
+    const transport = transports[sessionId];
+    if (!transport) return res.status(404).send("Session not found");
 
-      const activeTransport: SSEServerTransport | undefined =
-        activeTransports[sessionId];
-
-      if (!activeTransport) {
-        res.writeHead(400).end("No active transport");
-        return;
-      }
-
-      await activeTransport.handlePostMessage(req, res);
-      return;
+    try {
+      await transport.handlePostMessage(req, res, req.body);
+    } catch (error) {
+      if (!res.headersSent) res.status(500).send("Error handling request");
     }
+  });
 
-    // If we reach here, no handler matched
-    res.writeHead(404).end("Not found");
-  };
-
-  // Custom cleanup for SSE server
-  const cleanup = () => {
-    // Close all active transports
-    for (const transport of Object.values(activeTransports)) {
-      try {
-        transport.close();
-      } catch (error) {
-        Logger.error("Error closing SSE transport", error);
-      }
-    }
-  };
-
-  // Create the HTTP server using our factory
-  createBaseHttpServer(port, endpoint, {
-    handleRequest,
-    cleanup,
-    serverType: "SSE Server",
+  app.listen(port, () => {
+    console.log(`SSE Server listening on http://localhost:${port}${endpoint}`);
   });
 };

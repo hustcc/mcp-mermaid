@@ -53,7 +53,9 @@ Also, you can use it on aliyun, modelscope, glama.ai, smithery.ai or others with
 
 ## 🚰 Run with SSE or Streamable transport
 
-Install the package globally.
+### Option 1: Global Installation
+
+Install the package globally:
 
 ```bash
 npm install -g mcp-mermaid
@@ -69,10 +71,28 @@ mcp-mermaid -t sse
 mcp-mermaid -t streamable
 ```
 
-Then you can access the server at:
-- SSE transport: `http://localhost:3033/sse`
-- Streamable transport: `http://localhost:3033/mcp`
+### Option 2: Local Development
 
+If you're working with the source code locally:
+
+```bash
+# Clone and setup
+git clone https://github.com/hustcc/mcp-mermaid.git
+cd mcp-mermaid
+npm install
+npm run build
+
+# Run with npm scripts
+npm run start:sse        # SSE transport on port 3033
+npm run start:streamable # Streamable transport on port 1122
+```
+
+### Access Points
+
+Then you can access the server at:
+
+- SSE transport: `http://localhost:3033/sse`
+- Streamable transport: `http://localhost:1122/mcp` (local) or `http://localhost:3033/mcp` (global)
 
 ## 🎮 CLI Options
 
@@ -90,7 +110,6 @@ Options:
   --help, -h       Show this help message
 ```
 
-
 ## 🔨 Development
 
 Install dependencies:
@@ -105,12 +124,36 @@ Build the server:
 npm run build
 ```
 
-Start the MCP server:
+### Start the MCP server
+
+**Using MCP Inspector (for debugging):**
 
 ```bash
 npm run start
 ```
 
+**Using different transport protocols:**
+
+```bash
+# SSE transport (Server-Sent Events)
+npm run start:sse
+
+# Streamable HTTP transport
+npm run start:streamable
+```
+
+**Direct node commands:**
+
+```bash
+# SSE transport on port 3033
+node build/index.js --transport sse --port 3033
+
+# Streamable HTTP transport on port 1122
+node build/index.js --transport streamable --port 1122
+
+# STDIO transport (for MCP client integration)
+node build/index.js --transport stdio
+```
 
 ## 📄 License
 
