@@ -9,6 +9,8 @@
     "prebuild": "rm -rf build/*",
     "build": "tsc && tsc-alias -p tsconfig.json",
     "start": "npx @modelcontextprotocol/inspector node build/index.js",
+    "start:sse": "node build/index.js --transport sse --port 3033",
+    "start:streamable": "node build/index.js --transport streamable --port 1122",
     "prepare": "husky && npm run build",
     "prepublishOnly": "npm run build",
     "postinstall": "playwright install --with-deps chromium"
