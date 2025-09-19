@@ -19,6 +19,11 @@ const { values } = parseArgs({
       short: "p",
       default: "3033",
     },
+    host: {
+      type: "string",
+      short: "H",
+      default: "",
+    },
     endpoint: {
       type: "string",
       short: "e",
@@ -39,6 +44,7 @@ MCP Mermaid CLI
 Options:
   --transport, -t  Specify the transport protocol: "stdio", "sse", or "streamable" (default: "stdio")
   --port, -p       Specify the port for SSE or streamable transport (default: 3033)
+  --host, -H       Specify the host to bind (e.g., 0.0.0.0)
   --endpoint, -e   Specify the endpoint for the transport:
                    - For SSE: default is "/sse"
                    - For streamable: default is "/mcp"
@@ -54,12 +60,14 @@ if (transport === "sse") {
   const port = Number.parseInt(values.port as string, 10);
   // Use provided endpoint or default to "/sse" for SSE
   const endpoint = values.endpoint || "/sse";
-  runSSEServer(endpoint, port).catch(console.error);
+  const host = (values.host as string) || undefined;
+  runSSEServer(endpoint, port, host).catch(console.error);
 } else if (transport === "streamable") {
   const port = Number.parseInt(values.port as string, 10);
   // Use provided endpoint or default to "/mcp" for streamable
   const endpoint = values.endpoint || "/mcp";
-  runHTTPStreamableServer(endpoint, port).catch(console.error);
+  const host = (values.host as string) || undefined;
+  runHTTPStreamableServer(endpoint, port, host).catch(console.error);
 } else {
   runStdioServer().catch(console.error);
 }
