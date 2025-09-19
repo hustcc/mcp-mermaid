@@ -8,6 +8,7 @@ export const startHTTPStreamableServer = async (
   createServer: () => Server,
   endpoint = "/mcp",
   port = 1122,
+  host?: string,
 ): Promise<void> => {
   const app = express();
   app.use(express.json());
@@ -52,9 +53,12 @@ export const startHTTPStreamableServer = async (
     });
   });
 
-  app.listen(port, () => {
+  const cb = () => {
+    const shownHost = host || "localhost";
     console.log(
-      `Streamable HTTP Server listening on http://localhost:${port}${endpoint}`,
+      `Streamable HTTP Server listening on http://${shownHost}:${port}${endpoint}`,
     );
-  });
+  };
+  if (host) app.listen(port, host, cb);
+  else app.listen(port, cb);
 };

@@ -125,9 +125,10 @@ export async function runStdioServer(): Promise<void> {
 export async function runSSEServer(
   endpoint = "/sse",
   port = 3033,
+  host?: string,
 ): Promise<void> {
   const server = createServer();
-  await startSSEMcpServer(server, endpoint, port);
+  await startSSEMcpServer(server, endpoint, port, host);
 }
 
 /**
@@ -136,6 +137,7 @@ export async function runSSEServer(
 export async function runHTTPStreamableServer(
   endpoint = "/mcp",
   port = 3033,
+  host?: string,
 ): Promise<void> {
-  await startHTTPStreamableServer(createServer, endpoint, port);
+  await startHTTPStreamableServer(createServer, endpoint, port, host);
 }
