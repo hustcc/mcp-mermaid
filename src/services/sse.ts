@@ -7,6 +7,7 @@ export const startSSEMcpServer = async (
   server: Server,
   endpoint = "/sse",
   port = 3033,
+  host?: string,
 ): Promise<void> => {
   const app = express();
   app.use(express.json());
@@ -39,7 +40,12 @@ export const startSSEMcpServer = async (
     }
   });
 
-  app.listen(port, () => {
-    console.log(`SSE Server listening on http://localhost:${port}${endpoint}`);
-  });
+  const cb = () => {
+    const shownHost = host || "localhost";
+    console.log(
+      `SSE Server listening on http://${shownHost}:${port}${endpoint}`,
+    );
+  };
+  if (host) app.listen(port, host, cb);
+  else app.listen(port, cb);
 };
