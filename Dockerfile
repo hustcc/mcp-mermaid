@@ -23,16 +23,32 @@ COPY . .
 # 单独构建项目（不运行 prepare 脚本）
 RUN npm run prebuild && npm run build
 
-# 安装 Playwright，增加重试和更好的错误处理
+# 安装 Playwright 浏览器和系统依赖，增加重试和验证
 RUN for i in 1 2 3; do \
-        echo "Attempt $i: Installing Playwright..." && \
-        npx playwright install --with-deps chromium && break || \
-        if [ $i -eq 3 ]; then \
-            echo "Failed to install Playwright after 3 attempts" && exit 1; \
-        fi && \
-        echo "Attempt $i failed, retrying in 30 seconds..." && \
-        sleep 30; \
+        echo "Attempt $i: Installing Playwright browsers..." && \
+        npx playwright install --with-deps chromium && \
+        echo "Verifying Playwright installation..." && \
+        npx playwright install chromium && \
+        ls -la /root/.cache/ms-playwright/ && \
+        echo "✅ Playwright installation successful" && break || \
+        (
+            echo "❌ Attempt $i failed" && \
+            if [ $i -eq 3 ]; then \
+                echo "Failed to install Playwright after 3 attempts" && exit 1; \
+            fi && \
+            echo "Retrying in 30 seconds..." && sleep 30 \
+        ) \
     done
+
+# 验证 Playwright 功能
+RUN node -e "const { chromium } = require('playwright'); \
+    chromium.launch({ headless: true }).then(browser => { \
+        console.log('✅ Playwright browser verification successful'); \
+        return browser.close(); \
+    }).catch(err => { \
+        console.error('❌ Playwright verification failed:', err.message); \
+        process.exit(1); \
+    })"
 
 # 清理缓存和不需要的文件
 RUN npm prune --omit=dev && \
