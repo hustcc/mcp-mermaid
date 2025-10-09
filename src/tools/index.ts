@@ -23,9 +23,9 @@ C-->D;.`)
     .optional()
     .default("white"),
   outputType: z
-    .enum(["png", "svg", "mermaid"])
+    .enum(["png", "svg", "mermaid", "file"])
     .describe(
-      "The output type of the diagram. Can be 'png', 'svg' or 'mermaid'. Default is 'png'.",
+      "The output type of the diagram. Can be 'png', 'svg', 'mermaid', or 'file'. Default is 'png'. 'file' will save the PNG image to disk and return the file path.",
     )
     .optional()
     .default("png"),
@@ -34,6 +34,6 @@ C-->D;.`)
 export const tool = {
   name: "generate_mermaid_diagram",
   description:
-    "Generate mermaid diagram and chart with mermaid syntax dynamically. Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-inspired text definitions and a renderer to create and modify complex diagrams. The main purpose of Mermaid is to help documentation catch up with development.",
+    "Generate mermaid diagram and chart with mermaid syntax dynamically. Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-inspired text definitions and a renderer to create and modify complex diagrams. The main purpose of Mermaid is to help documentation catch up with development. Supports outputType 'file' to automatically save the generated PNG diagram to disk for easy access by AI agents.",
   inputSchema: zodToJsonSchema(schema),
 };

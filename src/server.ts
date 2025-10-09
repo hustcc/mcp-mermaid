@@ -1,3 +1,6 @@
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
@@ -84,6 +87,39 @@ function setupToolHandlers(server: Server): void {
               },
             ],
           };
+        }
+        if (outputType === "file") {
+          if (!screenshot) {
+            throw new McpError(
+              ErrorCode.InternalError,
+              "Failed to generate screenshot for file output.",
+            );
+          }
+
+          // Create a unique filename with timestamp and random suffix
+          const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+          const randomSuffix = Math.random().toString(36).substring(2, 8);
+          const filename = `mermaid-${timestamp}-${randomSuffix}.png`;
+
+          // Use current working directory to save the file
+          const filePath = path.resolve(process.cwd(), filename);
+
+          try {
+            fs.writeFileSync(filePath, screenshot);
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `Mermaid diagram saved to file: ${filePath}`,
+                },
+              ],
+            };
+          } catch (fileError) {
+            throw new McpError(
+              ErrorCode.InternalError,
+              `Failed to save file: ${fileError instanceof Error ? fileError.message : "Unknown file error"}`,
+            );
+          }
         }
         return {
           content: [
