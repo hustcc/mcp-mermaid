@@ -61,7 +61,7 @@ function setupToolHandlers(server: Server): void {
           );
         }
 
-        const { mermaid, theme, backgroundColor, outputType = "png" } = args;
+        const { mermaid, theme, backgroundColor, outputType = "base64" } = args;
         const { id, svg, screenshot } = await renderMermaid(
           mermaid as string,
           theme as string,
