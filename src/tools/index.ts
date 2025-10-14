@@ -23,12 +23,12 @@ C-->D;.`)
     .optional()
     .default("white"),
   outputType: z
-    .enum(["png", "svg", "mermaid"])
+    .enum(["base64", "svg", "mermaid", "file"])
     .describe(
-      "The output type of the diagram. Can be 'png', 'svg' or 'mermaid'. Default is 'png'.",
+      "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', or 'file'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'file' will save the PNG image to disk and return the file path.",
     )
     .optional()
-    .default("png"),
+    .default("base64"),
 });
 
 export const tool = {

@@ -22,9 +22,9 @@
       },
       "outputType": {
         "type": "string",
-        "enum": ["png", "svg", "mermaid"],
-        "description": "The output type of the diagram. Can be 'png', 'svg' or 'mermaid'. Default is 'png'.",
-        "default": "png"
+        "enum": ["base64", "svg", "mermaid", "file"],
+        "description": "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', or 'file'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'file' will save the PNG image to disk and return the file path.",
+        "default": "base64"
       }
     },
     "required": ["mermaid"],
