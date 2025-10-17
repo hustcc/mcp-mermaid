@@ -60,7 +60,7 @@ Run MCP Mermaid with Docker:
 docker pull susuperli/mcp-mermaid:latest
 
 # Run with SSE transport (default)
-docker run -p 3033:3033 susuperli/mcp-mermaid:latest
+docker run -p 3033:3033 susuperli/mcp-mermaid:latest --transport sse
 
 # Run with streamable transport
 docker run -p 1122:1122 susuperli/mcp-mermaid:latest --transport streamable --port 1122
