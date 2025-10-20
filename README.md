@@ -50,22 +50,6 @@ On Window system:
 
 Also, you can use it on aliyun, modelscope, glama.ai, smithery.ai or others with HTTP, SSE Protocol.
 
-
-## 🐳 Docker Usage
-
-Run MCP Mermaid with Docker:
-
-```bash
-# Pull the image
-docker pull susuperli/mcp-mermaid:latest
-
-# Run with SSE transport (default)
-docker run -p 3033:3033 susuperli/mcp-mermaid:latest --transport sse
-
-# Run with streamable transport
-docker run -p 1122:1122 susuperli/mcp-mermaid:latest --transport streamable --port 1122
-```
-
 **Access Points:**
 - SSE: `http://localhost:3033/sse`
 - Streamable: `http://localhost:1122/mcp`
@@ -177,6 +161,21 @@ node build/index.js --transport streamable --port 1122
 
 # STDIO transport (for MCP client integration)
 node build/index.js --transport stdio
+```
+
+## 🐳 Docker Usage
+
+Run MCP Mermaid with Docker:
+
+```bash
+# Pull the image
+docker pull susuperli/mcp-mermaid:latest
+
+# Run with SSE transport (default)
+docker run -p 3033:3033 susuperli/mcp-mermaid:latest --transport sse
+
+# Run with streamable transport
+docker run -p 1122:1122 susuperli/mcp-mermaid:latest --transport streamable --port 1122
 ```
 
 ## 📄 License
