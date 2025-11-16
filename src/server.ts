@@ -14,7 +14,7 @@ import {
   startStdioMcpServer,
 } from "./services";
 import { schema, tool } from "./tools";
-import { renderMermaid } from "./utils";
+import { createMermaidInkUrl, renderMermaid } from "./utils";
 import { Logger } from "./utils/logger";
 
 /**
@@ -84,6 +84,18 @@ function setupToolHandlers(server: Server): void {
               {
                 type: "text",
                 text: svg,
+              },
+            ],
+          };
+        }
+        if (outputType === "svg_url" || outputType === "png_url") {
+          const variant = outputType === "svg_url" ? "svg" : "img";
+          const url = createMermaidInkUrl(mermaid as string, variant);
+          return {
+            content: [
+              {
+                type: "text",
+                text: url,
               },
             ],
           };
