@@ -7,7 +7,7 @@ Generate <img src="https://mermaid.js.org/favicon.svg" height="14"/> [mermaid](h
 
 - Fully support all features and syntax of `Mermaid`.
 - Support configuration of `backgroundColor` and `theme`, enabling large AI models to output rich style configurations.
-- Support exporting to `base64`, `svg`, `mermaid`, and `file` formats, with validation for `Mermaid` to facilitate the model's multi-round output of correct syntax and graphics. Use `outputType: "file"` to automatically save PNG diagrams to disk for AI agents.
+- Support exporting to `base64`, `svg`, `mermaid`, `file`, and remote-friendly `svg_url` / `png_url` formats, with validation for `Mermaid` to facilitate the model's multi-round output of correct syntax and graphics. Use `outputType: "file"` to automatically save PNG diagrams to disk for AI agents, or the URL modes to share diagrams through public mermaid.ink links.
 
 <img width="720" alt="mcp-mermaid" src="https://mermaid.js.org/header.png" />
 
