@@ -3,7 +3,8 @@ import { deflateSync } from "node:zlib";
 /**
  * Encodes mermaid text into the Base64URL deflated format used by mermaid.ink.
  */
-export function encodeMermaidToBase64Url(mermaid: string): string {
+
+function encodeMermaidToBase64Url(mermaid: string): string {
   const compressed = deflateSync(mermaid, { level: 9 });
   return compressed
     .toString("base64")
