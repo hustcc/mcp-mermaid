@@ -23,9 +23,9 @@ C-->D;.`)
     .optional()
     .default("white"),
   outputType: z
-    .enum(["base64", "svg", "mermaid", "file"])
+    .enum(["base64", "svg", "mermaid", "file", "svg_url", "png_url"])
     .describe(
-      "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', or 'file'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'file' will save the PNG image to disk and return the file path.",
+      "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', 'file', 'svg_url', or 'png_url'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'file' saves the PNG image to disk. The *_url options return public mermaid.ink links for remote-friendly sharing.",
     )
     .optional()
     .default("base64"),
