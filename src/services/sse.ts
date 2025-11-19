@@ -1,3 +1,4 @@
+import type { Server as HTTPServer } from "node:http";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Request, Response } from "express";
@@ -8,7 +9,7 @@ export const startSSEMcpServer = async (
   endpoint = "/sse",
   port = 3033,
   host?: string,
-): Promise<void> => {
+): Promise<HTTPServer> => {
   const app = express();
   app.use(express.json());
 
@@ -46,6 +47,7 @@ export const startSSEMcpServer = async (
       `SSE Server listening on http://${shownHost}:${port}${endpoint}`,
     );
   };
-  if (host) app.listen(port, host, cb);
-  else app.listen(port, cb);
+
+  const httpServer = host ? app.listen(port, host, cb) : app.listen(port, cb);
+  return httpServer;
 };
