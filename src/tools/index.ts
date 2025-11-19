@@ -4,11 +4,14 @@ import { zodToJsonSchema } from "../utils";
 export const schema = z.object({
   mermaid: z
     .string()
-    .describe(`The mermaid diagram syntax used to be generated, such as, graph TD;
-A-->B;
-A-->C;
-B-->D;
-C-->D;.`)
+    .describe(`The mermaid diagram syntax to be generated. Use 'flowchart' instead of 'graph' for v10+ compatibility. Example:
+flowchart TD
+  A-->B
+  A-->C
+  B-->D
+  C-->D
+
+Other diagram types: sequenceDiagram, classDiagram, stateDiagram, erDiagram, gantt, pie, etc.`)
     .nonempty({ message: "The mermaid string cannot be empty." }),
   theme: z
     .enum(["default", "base", "forest", "dark", "neutral"])
