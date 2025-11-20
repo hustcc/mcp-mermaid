@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "type": "module",
   "scripts": {
+    "pretest": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "lint": "biome check .",

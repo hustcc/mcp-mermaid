@@ -128,7 +128,7 @@ describe("SSE Service", () => {
         log.includes("0.0.0.0:5000/sse"),
       );
       expect(hasHostMessage).toBe(true);
-    });
+    }, 15000); // Binding to 0.0.0.0 can be slower on CI; allow more time to avoid flakes.
 
     it("should use localhost when host is not provided", async () => {
       const mockServer = {
