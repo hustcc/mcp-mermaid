@@ -416,6 +416,23 @@ npx biome format --write .
 # Building
 npm run build          # Build for production
 npm start              # Start with inspector
+=======
+# Development
+npm run test:watch      # Watch mode for tests
+npm run test:ui         # Interactive test UI
+npm run test:coverage   # Coverage report
+
+# Linting
+npm run lint            # Check code style
+npm run lint:fix        # Auto-fix issues
+
+# Building
+npm run build           # Build for production
+npm start               # Start with inspector
+
+# Transport modes
+npm run start:sse       # Start SSE server
+npm run start:streamable # Start HTTP streamable server
 ```
 
 ## Getting Help
@@ -424,5 +441,3 @@ npm start              # Start with inspector
 - 🐛 Check [existing issues](https://github.com/hustcc/mcp-mermaid/issues)
 - 💬 Ask questions in issues
 - 📧 Contact maintainers
-
-
