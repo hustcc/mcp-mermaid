@@ -23,6 +23,18 @@
       "recommended": true
     }
   },
+  "overrides": [
+    {
+      "include": ["**/*.spec.ts", "**/*.test.ts", "__tests__/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
     "formatter": {
       "quoteStyle": "double"

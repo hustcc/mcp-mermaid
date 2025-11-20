@@ -1,3 +1,4 @@
+import type { Server as HTTPServer } from "node:http";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import cors from "cors";
@@ -9,7 +10,7 @@ export const startHTTPStreamableServer = async (
   endpoint = "/mcp",
   port = 1122,
   host?: string,
-): Promise<void> => {
+): Promise<HTTPServer> => {
   const app = express();
   app.use(express.json());
   app.use(cors({ origin: "*", exposedHeaders: ["Mcp-Session-Id"] }));
@@ -59,6 +60,7 @@ export const startHTTPStreamableServer = async (
       `Streamable HTTP Server listening on http://${shownHost}:${port}${endpoint}`,
     );
   };
-  if (host) app.listen(port, host, cb);
-  else app.listen(port, cb);
+
+  const httpServer = host ? app.listen(port, host, cb) : app.listen(port, cb);
+  return httpServer;
 };

@@ -22,19 +22,42 @@ export async function renderMermaid(
   backgroundColor = "white",
 ): Promise<RenderResult> {
   if (!renderer) renderer = createMermaidRenderer();
+
+  // Validate mermaid syntax is not empty
+  if (!mermaid || mermaid.trim().length === 0) {
+    throw new Error("Mermaid code cannot be empty");
+  }
+
   const cssContent = `svg { background: ${backgroundColor}; }`;
   const cssTmpPath = path.join(os.tmpdir(), "mermaid-tmp-css.css");
   fs.writeFileSync(cssTmpPath, cssContent);
 
-  const r = await renderer([mermaid], {
-    // Image is needed.
-    screenshot: true,
-    css: cssTmpPath,
-    mermaidConfig: {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      theme: theme as any,
-    },
-  });
-  const r0 = r[0] as PromiseSettledResult<RenderResult>;
-  return r0.status === "fulfilled" ? r0.value : Promise.reject(r0.reason);
+  try {
+    const r = await renderer([mermaid], {
+      // Image is needed.
+      screenshot: true,
+      css: cssTmpPath,
+      mermaidConfig: {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        theme: theme as any,
+      },
+    });
+    const r0 = r[0] as PromiseSettledResult<RenderResult>;
+
+    if (r0.status === "rejected") {
+      // Extract meaningful error message
+      const errorMessage = r0.reason?.message || r0.reason || "Unknown error";
+      throw new Error(`Mermaid syntax error: ${errorMessage}.
+Tip: For flowcharts, use 'flowchart TD' instead of 'graph TD' in Mermaid v10+.
+Check your syntax at https://mermaid.live/`);
+    }
+
+    return r0.value;
+  } catch (error) {
+    // Re-throw with helpful context
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(`Failed to render mermaid diagram: ${error}`);
+  }
 }

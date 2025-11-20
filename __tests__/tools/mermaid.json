@@ -7,7 +7,7 @@
       "mermaid": {
         "type": "string",
         "minLength": 1,
-        "description": "The mermaid diagram syntax used to be generated, such as, graph TD;\nA-->B;\nA-->C;\nB-->D;\nC-->D;."
+        "description": "The mermaid diagram syntax to be generated. Use 'flowchart' instead of 'graph' for v10+ compatibility. Example:\nflowchart TD\n  A-->B\n  A-->C\n  B-->D\n  C-->D\n\nOther diagram types: sequenceDiagram, classDiagram, stateDiagram, erDiagram, gantt, pie, etc."
       },
       "theme": {
         "type": "string",
