@@ -5,18 +5,14 @@
   "main": "build/index.js",
   "type": "module",
   "scripts": {
+    "pretest": "npm run build",
     "test": "vitest run",
-    "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui",
     "lint": "biome check .",
-    "lint:fix": "biome check --write . && biome format --write . && biome lint --write .",
     "prebuild": "rimraf build",
     "build": "tsc && tsc-alias -p tsconfig.json",
     "start": "npx @modelcontextprotocol/inspector node build/index.js",
-    "start:sse": "node build/index.js --transport sse --port 3033",
-    "start:streamable": "node build/index.js --transport streamable --port 1122",
-    "prepare": "husky",
+    "prepare": "husky && npm run build",
     "prepublishOnly": "npm run build",
     "postinstall": "playwright install --with-deps chromium"
   },
@@ -40,25 +36,21 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^22.15.21",
-    "@types/sinon": "^21.0.0",
-    "@types/supertest": "^6.0.3",
     "@vitest/coverage-v8": "^3.2.4",
     "axios": "^1.13.2",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
     "rimraf": "^6.1.2",
-    "sinon": "^21.0.0",
-    "supertest": "^7.1.4",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "lint-staged": {
     "src/**/*.{ts,js}": [
-      "biome check --write --files-ignore-unknown=true",
-      "biome format --write --files-ignore-unknown=true"
+      "biome check --write --no-errors-on-unmatched",
+      "biome format --write"
     ],
-    "*.json": ["biome format --write --files-ignore-unknown=true"]
+    "*.json": ["biome format --write"]
   },
   "repository": {
     "type": "git",

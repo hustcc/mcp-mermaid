@@ -1,4 +1,5 @@
-﻿import { describe, expect, it } from "vitest";
+import { inflateSync } from "node:zlib";
+import { describe, expect, it } from "vitest";
 import { createMermaidInkUrl } from "../../src/utils/mermaidUrl";
 
 describe("mermaidUrl", () => {
@@ -94,6 +95,28 @@ describe("mermaidUrl", () => {
       expect(encodedPart).not.toContain("+");
       expect(encodedPart).not.toContain("/");
       expect(encodedPart).not.toMatch(/=+$/);
+    });
+
+    it("should embed theme and background color into payload", () => {
+      const mermaid = "graph TD; A-->B;";
+      const url = createMermaidInkUrl(mermaid, "svg", {
+        theme: "default",
+        backgroundColor: "white",
+      });
+
+      const encodedPart = url.split("pako:")[1];
+      const buffer = Buffer.from(
+        encodedPart.replace(/-/g, "+").replace(/_/g, "/"),
+        "base64",
+      );
+
+      const inflated = inflateSync(buffer).toString("utf-8");
+      const payload = JSON.parse(inflated);
+
+      expect(payload.code).toBe(mermaid);
+      expect(payload.mermaid.theme).toBe("default");
+      expect(payload.mermaid.backgroundColor).toBe("white");
+      expect(payload.mermaid.themeVariables.background).toBe("white");
     });
 
     it("should handle flowcharts", () => {

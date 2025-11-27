@@ -2,7 +2,6 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { MermaidRenderer, RenderResult } from "mermaid-isomorphic";
-import sinon from "sinon";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock fs module
@@ -16,11 +15,9 @@ vi.mock("mermaid-isomorphic", () => ({
 }));
 
 describe("renderMermaid", () => {
-  let sandbox: sinon.SinonSandbox;
   let mockRenderer: MermaidRenderer;
 
   beforeEach(async () => {
-    sandbox = sinon.createSandbox();
     vi.clearAllMocks();
 
     // Reset the module to clear the cached renderer
@@ -28,7 +25,7 @@ describe("renderMermaid", () => {
   });
 
   afterEach(() => {
-    sandbox.restore();
+    // Cleanup
   });
 
   it("should render mermaid diagram with default parameters", async () => {
@@ -357,7 +354,7 @@ describe("renderMermaid", () => {
     expect(result.screenshot).toEqual(Buffer.from("sequence-image-data"));
   });
 
-  it("should handle error with specific error message", async () => {
+  it("should handle error with specific syntax error message", async () => {
     const mermaidCode = "invalid syntax";
     const customError = new Error("Syntax error in mermaid diagram");
 
@@ -372,6 +369,82 @@ describe("renderMermaid", () => {
 
     await expect(renderMermaid(mermaidCode)).rejects.toThrow(
       "Mermaid syntax error",
+    );
+    await expect(renderMermaid(mermaidCode)).rejects.toThrow(
+      "Check your syntax at https://mermaid.live/",
+    );
+  });
+
+  it("should handle parse errors as syntax errors", async () => {
+    const mermaidCode = "invalid";
+    const parseError = new Error("Parse error at line 1");
+
+    const mockRenderer = vi
+      .fn()
+      .mockResolvedValue([{ status: "rejected", reason: parseError }]);
+
+    const { createMermaidRenderer } = await import("mermaid-isomorphic");
+    vi.mocked(createMermaidRenderer).mockReturnValue(mockRenderer as any);
+
+    const { renderMermaid } = await import("../../src/utils/render");
+
+    await expect(renderMermaid(mermaidCode)).rejects.toThrow(
+      "Mermaid syntax error",
+    );
+  });
+
+  it("should handle invalid diagram errors as syntax errors", async () => {
+    const mermaidCode = "bad diagram";
+    const invalidError = new Error("Invalid diagram type");
+
+    const mockRenderer = vi
+      .fn()
+      .mockResolvedValue([{ status: "rejected", reason: invalidError }]);
+
+    const { createMermaidRenderer } = await import("mermaid-isomorphic");
+    vi.mocked(createMermaidRenderer).mockReturnValue(mockRenderer as any);
+
+    const { renderMermaid } = await import("../../src/utils/render");
+
+    await expect(renderMermaid(mermaidCode)).rejects.toThrow(
+      "Mermaid syntax error",
+    );
+  });
+
+  it("should handle non-syntax rendering errors without syntax tip", async () => {
+    const mermaidCode = "flowchart TD\n  A-->B";
+    const memoryError = new Error("Out of memory");
+
+    const mockRenderer = vi
+      .fn()
+      .mockResolvedValue([{ status: "rejected", reason: memoryError }]);
+
+    const { createMermaidRenderer } = await import("mermaid-isomorphic");
+    vi.mocked(createMermaidRenderer).mockReturnValue(mockRenderer as any);
+
+    const { renderMermaid } = await import("../../src/utils/render");
+
+    await expect(renderMermaid(mermaidCode)).rejects.toThrow(
+      "Failed to render mermaid diagram: Out of memory",
+    );
+    await expect(renderMermaid(mermaidCode)).rejects.not.toThrow("syntax");
+  });
+
+  it("should handle browser launch errors without syntax tip", async () => {
+    const mermaidCode = "flowchart TD\n  A-->B";
+    const browserError = new Error("Failed to launch browser");
+
+    const mockRenderer = vi
+      .fn()
+      .mockResolvedValue([{ status: "rejected", reason: browserError }]);
+
+    const { createMermaidRenderer } = await import("mermaid-isomorphic");
+    vi.mocked(createMermaidRenderer).mockReturnValue(mockRenderer as any);
+
+    const { renderMermaid } = await import("../../src/utils/render");
+
+    await expect(renderMermaid(mermaidCode)).rejects.toThrow(
+      "Failed to render mermaid diagram: Failed to launch browser",
     );
   });
 
@@ -393,7 +466,7 @@ describe("renderMermaid", () => {
 
   it("should handle rejection with reason object without message property", async () => {
     const mermaidCode = "invalid syntax";
-    const reasonObject = { code: "ERR_SYNTAX", details: "Invalid" };
+    const reasonObject = { code: "ERR_RENDER", details: "Rendering failed" };
 
     const mockRenderer = vi
       .fn()
@@ -404,8 +477,9 @@ describe("renderMermaid", () => {
 
     const { renderMermaid } = await import("../../src/utils/render");
 
+    // Object without 'syntax', 'parse', or 'invalid' in message should be general error
     await expect(renderMermaid(mermaidCode)).rejects.toThrow(
-      "Mermaid syntax error",
+      "Failed to render mermaid diagram",
     );
   });
 
@@ -428,7 +502,7 @@ describe("renderMermaid", () => {
   });
 
   it("should handle rejection with null/undefined reason", async () => {
-    const mermaidCode = "invalid syntax";
+    const mermaidCode = "flowchart TD\n  A-->B";
 
     const mockRenderer = vi
       .fn()
@@ -439,8 +513,9 @@ describe("renderMermaid", () => {
 
     const { renderMermaid } = await import("../../src/utils/render");
 
+    // Unknown error should be general rendering error, not syntax
     await expect(renderMermaid(mermaidCode)).rejects.toThrow(
-      "Mermaid syntax error: Unknown error",
+      "Failed to render mermaid diagram: Unknown error",
     );
   });
 

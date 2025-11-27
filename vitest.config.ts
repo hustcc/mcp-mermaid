@@ -39,5 +39,9 @@ export default defineConfig({
     mockReset: true,
     restoreMocks: true,
     clearMocks: true,
+    // Run suites serially to avoid multiple Playwright renditions starting in parallel on CI.
+    sequence: {
+      concurrent: false,
+    },
   },
 });

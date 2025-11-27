@@ -1,7 +1,6 @@
 import type { Server as HTTPServer } from "node:http";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import sinon from "sinon";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the SSEServerTransport
@@ -14,18 +13,16 @@ vi.mock("@modelcontextprotocol/sdk/server/sse.js", () => ({
 }));
 
 describe("SSE Service", () => {
-  let sandbox: sinon.SinonSandbox;
-  let consoleLogSpy: sinon.SinonSpy;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
   const servers: HTTPServer[] = [];
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-    consoleLogSpy = sandbox.spy(console, "log");
+    consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
     vi.clearAllMocks();
   });
 
   afterEach(async () => {
-    sandbox.restore();
+    consoleLogSpy.mockRestore();
 
     // Close all HTTP servers to prevent port conflicts
     await Promise.all(
@@ -68,10 +65,8 @@ describe("SSE Service", () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Verify console.log was called with startup message
-      expect(consoleLogSpy.called).toBe(true);
-      const logCalls = consoleLogSpy
-        .getCalls()
-        .map((call) => call.args.join(" "));
+      expect(consoleLogSpy.mock.calls.length > 0).toBe(true);
+      const logCalls = consoleLogSpy.mock.calls.map((call) => call.join(" "));
       const hasStartupMessage = logCalls.some(
         (log) =>
           log.includes("SSE Server listening on") &&
@@ -100,10 +95,8 @@ describe("SSE Service", () => {
 
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(consoleLogSpy.called).toBe(true);
-      const logCalls = consoleLogSpy
-        .getCalls()
-        .map((call) => call.args.join(" "));
+      expect(consoleLogSpy.mock.calls.length > 0).toBe(true);
+      const logCalls = consoleLogSpy.mock.calls.map((call) => call.join(" "));
       const hasCustomMessage = logCalls.some((log) =>
         log.includes("localhost:4000/custom-sse"),
       );
@@ -129,15 +122,13 @@ describe("SSE Service", () => {
 
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(consoleLogSpy.called).toBe(true);
-      const logCalls = consoleLogSpy
-        .getCalls()
-        .map((call) => call.args.join(" "));
+      expect(consoleLogSpy.mock.calls.length > 0).toBe(true);
+      const logCalls = consoleLogSpy.mock.calls.map((call) => call.join(" "));
       const hasHostMessage = logCalls.some((log) =>
         log.includes("0.0.0.0:5000/sse"),
       );
       expect(hasHostMessage).toBe(true);
-    });
+    }, 15000); // Binding to 0.0.0.0 can be slower on CI; allow more time to avoid flakes.
 
     it("should use localhost when host is not provided", async () => {
       const mockServer = {
@@ -152,9 +143,7 @@ describe("SSE Service", () => {
 
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const logCalls = consoleLogSpy
-        .getCalls()
-        .map((call) => call.args.join(" "));
+      const logCalls = consoleLogSpy.mock.calls.map((call) => call.join(" "));
       const hasLocalhost = logCalls.some((log) => log.includes("localhost"));
       expect(hasLocalhost).toBe(true);
     });
@@ -247,12 +236,17 @@ describe("SSE Service", () => {
 
       const { startSSEMcpServer } = await import("../../src/services/sse");
 
-      // Should not throw with all parameters
-      expect(() => {
-        startSSEMcpServer(mockServer, "/api/sse", 8080, "127.0.0.1");
-      }).not.toThrow();
+      const httpServer = await startSSEMcpServer(
+        mockServer,
+        "/api/sse",
+        8080,
+        "127.0.0.1",
+      );
+      servers.push(httpServer);
 
       await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(httpServer.listening).toBe(true);
     });
 
     it("should work with only required parameter (server)", async () => {
@@ -263,12 +257,12 @@ describe("SSE Service", () => {
 
       const { startSSEMcpServer } = await import("../../src/services/sse");
 
-      // Should not throw with only server
-      expect(() => {
-        startSSEMcpServer(mockServer);
-      }).not.toThrow();
+      const httpServer = await startSSEMcpServer(mockServer);
+      servers.push(httpServer);
 
       await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(httpServer.listening).toBe(true);
     });
 
     it("should handle async initialization", async () => {
@@ -283,7 +277,12 @@ describe("SSE Service", () => {
       const result = startSSEMcpServer(mockServer);
       expect(result).toBeInstanceOf(Promise);
 
+      const httpServer = await result;
+      servers.push(httpServer);
+
       await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(httpServer.listening).toBe(true);
     });
   });
 
@@ -303,7 +302,7 @@ describe("SSE Service", () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Server should have been configured
-      expect(consoleLogSpy.called).toBe(true);
+      expect(consoleLogSpy.mock.calls.length > 0).toBe(true);
     });
   });
 
@@ -402,17 +401,15 @@ describe("SSE Service", () => {
       const testPort = 13012;
 
       // Clear console log spy before test
-      consoleLogSpy.resetHistory();
+      consoleLogSpy.mockClear();
 
       const httpServer = await startSSEMcpServer(mockServer, "/sse", testPort);
       servers.push(httpServer);
       await new Promise((resolve) => setTimeout(resolve, 200));
 
       // The callback function (cb) should have executed and logged the startup message
-      expect(consoleLogSpy.called).toBe(true);
-      const logCalls = consoleLogSpy
-        .getCalls()
-        .map((call) => call.args.join(" "));
+      expect(consoleLogSpy.mock.calls.length > 0).toBe(true);
+      const logCalls = consoleLogSpy.mock.calls.map((call) => call.join(" "));
       const hasStartupMessage = logCalls.some((log) =>
         log.includes("SSE Server listening on"),
       );
@@ -428,7 +425,7 @@ describe("SSE Service", () => {
       const { startSSEMcpServer } = await import("../../src/services/sse");
       const testPort = 13013;
 
-      consoleLogSpy.resetHistory();
+      consoleLogSpy.mockClear();
 
       // Start with a custom host to ensure the cb function executes with host parameter
       const httpServer = await startSSEMcpServer(
@@ -441,10 +438,8 @@ describe("SSE Service", () => {
       await new Promise((resolve) => setTimeout(resolve, 200));
 
       // Verify callback executed
-      expect(consoleLogSpy.called).toBe(true);
-      const logCalls = consoleLogSpy
-        .getCalls()
-        .map((call) => call.args.join(" "));
+      expect(consoleLogSpy.mock.calls.length > 0).toBe(true);
+      const logCalls = consoleLogSpy.mock.calls.map((call) => call.join(" "));
       const hasMessage = logCalls.some(
         (log) => log.includes("127.0.0.1") && log.includes(String(testPort)),
       );

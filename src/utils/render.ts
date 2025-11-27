@@ -45,19 +45,34 @@ export async function renderMermaid(
     const r0 = r[0] as PromiseSettledResult<RenderResult>;
 
     if (r0.status === "rejected") {
-      // Extract meaningful error message
-      const errorMessage = r0.reason?.message || r0.reason || "Unknown error";
-      throw new Error(`Mermaid syntax error: ${errorMessage}.
-Tip: For flowcharts, use 'flowchart TD' instead of 'graph TD' in Mermaid v10+.
-Check your syntax at https://mermaid.live/`);
+      // Check if it's a syntax error or other type of error
+      const reason = r0.reason;
+      const errorMessage =
+        reason?.message || (reason ? String(reason) : "Unknown error");
+
+      // Determine if it's likely a syntax error based on error message
+      const isSyntaxError =
+        errorMessage.toLowerCase().includes("syntax") ||
+        errorMessage.toLowerCase().includes("parse") ||
+        errorMessage.toLowerCase().includes("invalid");
+
+      if (isSyntaxError) {
+        throw new Error(
+          `Mermaid syntax error: ${errorMessage}.\nTip: For flowcharts, use 'flowchart TD' instead of 'graph TD' in Mermaid v10+.\nCheck your syntax at https://mermaid.live/`,
+        );
+      }
+
+      // Other rendering errors (memory, timeout, browser issues, etc.)
+      throw new Error(`Failed to render mermaid diagram: ${errorMessage}`);
     }
 
     return r0.value;
   } catch (error) {
-    // Re-throw with helpful context
+    // Re-throw errors that are already Error instances (including our custom ones)
     if (error instanceof Error) {
       throw error;
     }
+    // Handle non-Error exceptions
     throw new Error(`Failed to render mermaid diagram: ${error}`);
   }
 }

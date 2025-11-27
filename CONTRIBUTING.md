@@ -73,6 +73,28 @@ npm run build
 
 We use **Biome** for linting and formatting. All code must pass Biome checks.
 
+#### Checking for Issues
+
+```bash
+# Check for lint/format issues
+npm run lint
+```
+
+#### Auto-fixing Issues
+
+```bash
+# Auto-fix safe issues with Biome
+npx biome check --write .
+
+# Format all files
+npx biome format --write .
+
+# Both check and format
+npx biome check --write . && npx biome format --write .
+```
+
+**Note:** The pre-commit hook automatically runs linting on staged files, but you can manually fix issues before committing using the commands above.
+
 #### Source Code (src/)
 
 - ✅ Must follow Biome rules strictly
@@ -380,6 +402,21 @@ BREAKING CHANGE: outputType 'base64' now returns object instead of string"
 ## Development Scripts
 
 ```bash
+# Testing
+npm test               # Run all tests
+npm run test:coverage  # Generate coverage report
+
+# Linting
+npm run lint           # Check code style
+
+# Auto-fix lint issues
+npx biome check --write .
+npx biome format --write .
+
+# Building
+npm run build          # Build for production
+npm start              # Start with inspector
+=======
 # Development
 npm run test:watch      # Watch mode for tests
 npm run test:ui         # Interactive test UI
@@ -404,11 +441,3 @@ npm run start:streamable # Start HTTP streamable server
 - 🐛 Check [existing issues](https://github.com/hustcc/mcp-mermaid/issues)
 - 💬 Ask questions in issues
 - 📧 Contact maintainers
-
-
----
-
-**Thank you for contributing to MCP Mermaid!** 🙏
-
-By following these guidelines, you help us maintain a high-quality, reliable, and well-tested codebase.
-

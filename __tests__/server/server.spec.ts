@@ -1,7 +1,6 @@
 import * as fs from "node:fs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
-import sinon from "sinon";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createServer } from "../../src/server";
 
@@ -21,15 +20,12 @@ vi.mock("../../src/utils", async (importOriginal) => {
 });
 
 describe("Server", () => {
-  let sandbox: sinon.SinonSandbox;
-
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
     vi.clearAllMocks();
   });
 
   afterEach(() => {
-    sandbox.restore();
+    // Cleanup mocks
   });
 
   describe("createServer", () => {

@@ -3,18 +3,16 @@
 ## Overview
 
 This project uses a comprehensive testing setup with:
-- **Vitest** as the test framework
-- **Sinon** for advanced mocking capabilities
+- **Vitest** as the test framework and mocking library
 - **Axios** for HTTP integration testing
 - **@vitest/coverage-v8** for code coverage reporting
-- **CodeCov** for coverage tracking and reporting
 
 **Test Statistics:**
-- Total Tests: **169**
+- Total Tests: **162**
 - Test Files: **14**
 - All Tests Passing: ✅
 - Coverage: **100%** (all metrics)
-- Execution Time: ~7 seconds
+- Execution Time: ~7-8 seconds
 
 ## Test Coverage Goals
 
@@ -33,20 +31,11 @@ The project maintains a **90% minimum coverage** threshold for:
 npm test
 ```
 
-### Run tests in watch mode
-```bash
-npm run test:watch
-```
-
 ### Run tests with coverage
 ```bash
 npm run test:coverage
 ```
 
-### Run tests with UI
-```bash
-npm run test:ui
-```
 
 ## Test Structure
 
@@ -86,21 +75,26 @@ vi.mock("@modelcontextprotocol/sdk/server/stdio.js", () => ({
 }));
 ```
 
-### 2. Advanced Mocking with Sinon
+### 2. Spying on Functions
 
-For complex scenarios, we use Sinon for better control:
+We use Vitest's `vi.spyOn()` for spying on function calls:
 
 ```typescript
-let sandbox: sinon.SinonSandbox;
+let consoleLogSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
-  sandbox = sinon.createSandbox();
-  consoleLogSpy = sandbox.spy(console, "log");
+  consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
 afterEach(() => {
-  sandbox.restore();
+  consoleLogSpy.mockRestore();
 });
+
+// Check if called
+expect(consoleLogSpy.mock.calls.length > 0).toBe(true);
+
+// Access call arguments
+const allCalls = consoleLogSpy.mock.calls;
 ```
 
 ### 3. HTTP Integration Testing
@@ -177,7 +171,7 @@ Add your CodeCov token to GitHub repository secrets:
 
 The project uses GitHub Actions for continuous testing and quality checks.
 
-### Workflow: `.github/workflows/ci.yml`
+### Workflow: `.github/workflows/build.yml`
 
 **Triggers:**
 - Push to `main`, `master`, or `develop` branches
@@ -185,38 +179,34 @@ The project uses GitHub Actions for continuous testing and quality checks.
 
 **Jobs:**
 
-#### 1. Lint and Test Coverage
-- **Matrix**: Node.js 18.x and 20.x
-- **Steps:**
-  1. Checkout code
-  2. Setup Node.js with npm cache
-  3. Install dependencies (`npm ci`)
-  4. Run lint check (`npm run lint`)
-  5. Run tests with coverage (`npm run test:coverage`)
-  6. **Enforce 90% coverage threshold** - Fails if any metric below 90%
-  7. Upload coverage to CodeCov (Node 20.x only)
-  8. Save coverage artifacts (30 days retention)
+The build workflow runs on **Node.js 18.x and 20.x** (matrix strategy) and performs:
 
-#### 2. Build Check
-- **Runs after**: Lint and Test pass
-- **Steps:**
-  1. Checkout code
-  2. Setup Node.js 20.x
-  3. Install dependencies
-  4. Build project (`npm run build`)
-  5. Save build artifacts (7 days retention)
+1. **Checkout code**
+2. **Setup Node.js**
+3. **Install dependencies** (`npm install`)
+4. **Lint check** (`npm run lint`) - Uses Biome
+5. **Build project** (`npm run build`)
+6. **Run tests with coverage** (`npm run test:coverage`)
+7. **Check coverage threshold** (90% minimum enforced by vitest.config.ts)
+8. **Upload to CodeCov** (Node 20.x only, optional)
+9. **Save coverage artifacts** (30 days retention, Node 20.x only)
 
 ### Coverage Enforcement
 
-The CI pipeline includes a **strict 90% coverage check**:
+Coverage thresholds are enforced by **Vitest configuration** (`vitest.config.ts`):
 
-```javascript
-// Checks all metrics: Statements, Branches, Functions, Lines
-if (coverage < 90%) {
-  console.error('❌ Coverage below 90% threshold');
-  process.exit(1); // Fails the build
+```typescript
+coverage: {
+  thresholds: {
+    lines: 90,
+    functions: 90,
+    branches: 90,
+    statements: 90,
+  }
 }
 ```
+
+The test command will **automatically fail** if coverage drops below 90% on any metric.
 
 **Build will fail if:**
 - ❌ Lint errors exist
@@ -226,15 +216,16 @@ if (coverage < 90%) {
 
 ### Artifacts
 
-**Coverage Reports** (30 days):
-- HTML coverage report
-- LCOV data
-- JSON coverage data
+**Coverage Reports** (30 days retention, Node 20.x only):
+- HTML coverage report (`coverage/index.html`)
+- LCOV data (`coverage/lcov.info`)
+- JSON coverage data (`coverage/coverage-final.json`)
 
-**Build Output** (7 days):
-- Compiled JavaScript files
-- Type definitions
-- Source maps
+**How to access:**
+1. Go to Actions tab in GitHub
+2. Click on a workflow run
+3. Scroll to "Artifacts" section
+4. Download "coverage-report"
 
 ## Best Practices
 
@@ -314,6 +305,31 @@ git commit --no-verify -m "Emergency commit"
 
 ## Troubleshooting
 
+### Lint Check Failed
+
+**Problem:** Code style violations detected by Biome
+
+**Solution:**
+```bash
+# Check what's wrong
+npm run lint
+
+# Auto-fix most issues
+npx biome check --write .
+
+# Format all files
+npx biome format --write .
+
+# Both check and format
+npx biome check --write . && npx biome format --write .
+```
+
+**Common fixes:**
+- Template literal usage instead of string concatenation
+- Consistent quote styles
+- Missing/extra whitespace
+- Unused imports or variables
+
 ### Tests Timing Out
 If tests timeout, check for:
 - Unmocked async operations
@@ -342,12 +358,4 @@ When adding new features:
 4. Pre-commit hooks will automatically run and block commits if tests fail
 5. Update this documentation if adding new testing patterns
 
-### Coverage Requirements
-
-All contributions **must maintain**:
-- ✅ Minimum 90% coverage on all metrics
-- ✅ All tests passing
-- ✅ No regressions in existing tests
-
-The pre-commit hook enforces these requirements automatically.
 
