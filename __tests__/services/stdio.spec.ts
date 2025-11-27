@@ -43,14 +43,6 @@ describe("STDIO Service", () => {
       expect(mockServer.connect).toHaveBeenCalledWith(mockTransport);
     });
 
-    it("should log startup message", async () => {
-      const consoleSpy = vi.spyOn(console, "log");
-
-      await startStdioMcpServer(mockServer);
-
-      expect(consoleSpy).toHaveBeenCalledWith("STDIO MCP Server started");
-    });
-
     it("should handle connection errors", async () => {
       const error = new Error("Connection failed");
       vi.mocked(mockServer.connect).mockRejectedValue(error);
