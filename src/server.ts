@@ -61,13 +61,7 @@ function setupToolHandlers(server: Server): void {
           );
         }
 
-        const {
-          mermaid,
-          theme,
-          backgroundColor,
-          outputType = "base64",
-          format = "png",
-        } = args;
+        const { mermaid, theme, backgroundColor, outputType = "base64" } = args;
         const { id, svg, screenshot } = await renderMermaid(
           mermaid as string,
           theme as string,
@@ -106,34 +100,23 @@ function setupToolHandlers(server: Server): void {
             ],
           };
         }
-        if (outputType === "file") {
-          // Create a unique filename with timestamp and random suffix
+        if (outputType === "png_file") {
+          // Create a unique filename with timestamp and random suffix for PNG
           const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
           const randomSuffix = Math.random().toString(36).substring(2, 8);
-          const extension = format === "svg" ? "svg" : "png";
-          const filename = `mermaid-${timestamp}-${randomSuffix}.${extension}`;
+          const filename = `mermaid-${timestamp}-${randomSuffix}.png`;
 
           // Use current working directory to save the file
           const filePath = path.resolve(process.cwd(), filename);
 
           try {
-            if (format === "svg") {
-              if (!svg) {
-                throw new McpError(
-                  ErrorCode.InternalError,
-                  "Failed to generate SVG for file output.",
-                );
-              }
-              fs.writeFileSync(filePath, svg, "utf8");
-            } else {
-              if (!screenshot) {
-                throw new McpError(
-                  ErrorCode.InternalError,
-                  "Failed to generate screenshot for PNG file output.",
-                );
-              }
-              fs.writeFileSync(filePath, screenshot);
+            if (!screenshot) {
+              throw new McpError(
+                ErrorCode.InternalError,
+                "Failed to generate screenshot for PNG file output.",
+              );
             }
+            fs.writeFileSync(filePath, screenshot);
 
             return {
               content: [
@@ -147,6 +130,39 @@ function setupToolHandlers(server: Server): void {
             throw new McpError(
               ErrorCode.InternalError,
               `Failed to save file: ${fileError instanceof Error ? fileError.message : "Unknown file error"}`,
+            );
+          }
+        }
+        if (outputType === "svg_file") {
+          // Create a unique filename with timestamp and random suffix for SVG
+          const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+          const randomSuffix = Math.random().toString(36).substring(2, 8);
+          const filename = `mermaid-${timestamp}-${randomSuffix}.svg`;
+
+          // Use current working directory to save the file
+          const filePath = path.resolve(process.cwd(), filename);
+
+          try {
+            if (!svg) {
+              throw new McpError(
+                ErrorCode.InternalError,
+                "Failed to generate SVG for file output.",
+              );
+            }
+            fs.writeFileSync(filePath, svg, "utf8");
+
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `Mermaid SVG diagram saved to file: ${filePath}`,
+                },
+              ],
+            };
+          } catch (fileError) {
+            throw new McpError(
+              ErrorCode.InternalError,
+              `Failed to save SVG file: ${fileError instanceof Error ? fileError.message : "Unknown file error"}`,
             );
           }
         }

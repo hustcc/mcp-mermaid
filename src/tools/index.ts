@@ -23,19 +23,20 @@ C-->D;.`)
     .optional()
     .default("white"),
   outputType: z
-    .enum(["base64", "svg", "mermaid", "file", "svg_url", "png_url"])
+    .enum([
+      "base64",
+      "svg",
+      "mermaid",
+      "png_file",
+      "svg_file",
+      "svg_url",
+      "png_url",
+    ])
     .describe(
-      "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', 'file', 'svg_url', or 'png_url'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'file' saves the image to disk. The *_url options return public mermaid.ink links for remote-friendly sharing.",
+      "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', 'png_file', 'svg_file', 'svg_url', or 'png_url'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'png_file' saves PNG image to disk. 'svg_file' saves SVG image to disk. The *_url options return public mermaid.ink links for remote-friendly sharing.",
     )
     .optional()
     .default("base64"),
-  format: z
-    .enum(["png", "svg"])
-    .describe(
-      "The file format when using outputType 'file'. Can be 'png' or 'svg'. Default is 'png'. PNG provides raster image, SVG provides vector format with higher quality and scalability.",
-    )
-    .optional()
-    .default("png"),
 });
 
 export const tool = {
