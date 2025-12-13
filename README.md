@@ -1,4 +1,4 @@
-# <img src="https://mermaid.js.org/favicon.svg" height="24"/> MCP Mermaid ![](https://badge.mcpx.dev?type=server 'MCP Server')  [![build](https://github.com/hustcc/mcp-mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/hustcc/mcp-mermaid/actions/workflows/build.yml) [![npm Version](https://img.shields.io/npm/v/mcp-mermaid.svg)](https://www.npmjs.com/package/mcp-mermaid) [![smithery badge](https://smithery.ai/badge/@hustcc/mcp-mermaid)](https://smithery.ai/server/@hustcc/mcp-mermaid) [![npm License](https://img.shields.io/npm/l/mcp-mermaid.svg)](https://www.npmjs.com/package/mcp-mermaid) [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/hustcc/mcp-mermaid)](https://archestra.ai/mcp-catalog/hustcc__mcp-mermaid)
+# <img src="https://mermaid.js.org/favicon.svg" height="24"/> MCP Mermaid ![](https://badge.mcpx.dev?type=server 'MCP Server')  [![build](https://github.com/jagadeesh52423/mcp-mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/jagadeesh52423/mcp-mermaid/actions/workflows/build.yml) [![npm Version](https://img.shields.io/npm/v/@jagadeesh52423/mcp-mermaid.svg)](https://www.npmjs.com/package/@jagadeesh52423/mcp-mermaid) [![npm License](https://img.shields.io/npm/l/@jagadeesh52423/mcp-mermaid.svg)](https://www.npmjs.com/package/@jagadeesh52423/mcp-mermaid)
 
 Generate <img src="https://mermaid.js.org/favicon.svg" height="14"/> [mermaid](https://mermaid.js.org/) diagram and chart with AI MCP dynamically. Also you can use <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ZFK8SrovcqgAAAAAAAAAAAAAemJ7AQ/original" height="14"/> [mcp-server-chart](https://github.com/antvis/mcp-server-chart) to generate chart, graph, map.
 
@@ -25,7 +25,7 @@ To use with `Desktop APP`, such as Claude, VSCode, Cline, Cherry Studio, and so 
       "command": "npx",
       "args": [
         "-y",
-        "mcp-mermaid"
+        "@jagadeesh52423/mcp-mermaid"
       ]
     }
   }
@@ -43,7 +43,7 @@ On Window system:
         "/c",
         "npx",
         "-y",
-        "mcp-mermaid"
+        "@jagadeesh52423/mcp-mermaid"
       ]
     }
   }
@@ -60,7 +60,7 @@ Also, you can use it on aliyun, modelscope, glama.ai, smithery.ai or others with
 Install the package globally:
 
 ```bash
-npm install -g mcp-mermaid
+npm install -g @jagadeesh52423/mcp-mermaid
 ```
 
 Run the server with your preferred transport option:
@@ -79,7 +79,7 @@ If you're working with the source code locally:
 
 ```bash
 # Clone and setup
-git clone https://github.com/hustcc/mcp-mermaid.git
+git clone https://github.com/jagadeesh52423/mcp-mermaid.git
 cd mcp-mermaid
 npm install
 npm run build
@@ -159,4 +159,8 @@ node build/index.js --transport stdio
 
 ## 📄 License
 
-MIT@[hustcc](https://github.com/hustcc).
+MIT@[jagadeesh52423](https://github.com/jagadeesh52423).
+
+## Credits
+
+This package is a fork of the original [mcp-mermaid](https://github.com/hustcc/mcp-mermaid) by [hustcc](https://github.com/hustcc).
