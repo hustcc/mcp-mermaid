@@ -1,7 +1,7 @@
 {
-  "name": "mcp-mermaid",
+  "name": "@jagadeesh52423/mcp-mermaid",
   "description": "❤️ Generate mermaid diagram and chart with AI MCP dynamically.",
-  "version": "0.5.0",
+  "version": "0.1.0",
   "main": "build/index.js",
   "type": "module",
   "scripts": {
@@ -50,7 +50,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hustcc/mcp-mermaid"
+    "url": "https://github.com/jagadeesh52423/mcp-mermaid"
   },
   "license": "MIT"
 }
