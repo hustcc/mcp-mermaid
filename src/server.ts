@@ -100,36 +100,38 @@ function setupToolHandlers(server: Server): void {
             ],
           };
         }
-        if (outputType === "file") {
-          if (!screenshot) {
+        if (outputType === "png_file" || outputType === "svg_file") {
+          const isSvg = outputType === "svg_file";
+          const ext = isSvg ? "svg" : "png";
+          const typeName = ext.toUpperCase();
+          const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+          const randomSuffix = Math.random().toString(36).substring(2, 8);
+          const filename = `mermaid-${timestamp}-${randomSuffix}.${ext}`;
+          const filePath = path.resolve(process.cwd(), filename);
+          const content = isSvg ? svg : screenshot;
+
+          if (!content) {
             throw new McpError(
               ErrorCode.InternalError,
-              "Failed to generate screenshot for file output.",
+              `Failed to generate ${typeName} for file output.`,
             );
           }
 
-          // Create a unique filename with timestamp and random suffix
-          const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-          const randomSuffix = Math.random().toString(36).substring(2, 8);
-          const filename = `mermaid-${timestamp}-${randomSuffix}.png`;
-
-          // Use current working directory to save the file
-          const filePath = path.resolve(process.cwd(), filename);
-
           try {
-            fs.writeFileSync(filePath, screenshot);
+            fs.writeFileSync(filePath, content, isSvg ? "utf8" : undefined);
+
             return {
               content: [
                 {
                   type: "text",
-                  text: `Mermaid diagram saved to file: ${filePath}`,
+                  text: `Mermaid ${typeName} diagram saved to file: ${filePath}`,
                 },
               ],
             };
           } catch (fileError) {
             throw new McpError(
               ErrorCode.InternalError,
-              `Failed to save file: ${fileError instanceof Error ? fileError.message : "Unknown file error"}`,
+              `Failed to save ${typeName} file: ${fileError instanceof Error ? fileError.message : "Unknown file error"}`,
             );
           }
         }
