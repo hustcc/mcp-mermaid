@@ -22,8 +22,16 @@
       },
       "outputType": {
         "type": "string",
-        "enum": ["base64", "svg", "mermaid", "file", "svg_url", "png_url"],
-        "description": "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', 'file', 'svg_url', or 'png_url'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'file' saves the PNG image to disk. The *_url options return public mermaid.ink links for remote-friendly sharing.",
+        "enum": [
+          "base64",
+          "svg",
+          "mermaid",
+          "png_file",
+          "svg_file",
+          "svg_url",
+          "png_url"
+        ],
+        "description": "The output type of the diagram. Can be 'base64', 'svg', 'mermaid', 'png_file', 'svg_file', 'svg_url', or 'png_url'. Default is 'base64'. 'base64' returns PNG image as base64 encoded string. 'png_file' saves PNG image to disk. 'svg_file' saves SVG image to disk. The *_url options return public mermaid.ink links for remote-friendly sharing.",
         "default": "base64"
       }
     },
