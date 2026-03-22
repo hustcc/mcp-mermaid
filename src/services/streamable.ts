@@ -1,11 +1,11 @@
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import cors from "cors";
 import type { Request, Response } from "express";
 import express from "express";
 
 export const startHTTPStreamableServer = async (
-  createServer: () => Server,
+  createServer: () => McpServer,
   endpoint = "/mcp",
   port = 1122,
   host?: string,
