@@ -89,7 +89,11 @@ function setupToolHandlers(server: McpServer): void {
         }
         if (outputType === "svg_url" || outputType === "png_url") {
           const variant = outputType === "svg_url" ? "svg" : "img";
-          const url = createMermaidInkUrl(mermaid as string, variant);
+          const url = createMermaidInkUrl(
+            mermaid as string,
+            variant,
+            (theme as string) || "default",
+          );
           return {
             content: [
               {
