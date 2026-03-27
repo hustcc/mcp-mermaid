@@ -1,10 +1,10 @@
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Request, Response } from "express";
 import express from "express";
 
 export const startSSEMcpServer = async (
-  server: Server,
+  server: McpServer,
   endpoint = "/sse",
   port = 3033,
   host?: string,

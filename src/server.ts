@@ -1,7 +1,6 @@
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import {
   CallToolRequestSchema,
   ErrorCode,
@@ -20,8 +19,8 @@ import { Logger } from "./utils/logger";
 /**
  * Creates and configures an MCP server for mermaid generation.
  */
-export function createServer(): Server {
-  const server = new Server(
+export function createServer(): McpServer {
+  const server = new McpServer(
     {
       name: "mcp-mermaid",
       version: "0.1.3",
@@ -35,7 +34,7 @@ export function createServer(): Server {
 
   setupToolHandlers(server);
 
-  server.onerror = (error) => Logger.error("MCP Error", error);
+  server.server.onerror = (error) => Logger.error("MCP Error", error);
 
   return server;
 }
@@ -43,12 +42,12 @@ export function createServer(): Server {
 /**
  * Sets up tool handlers for the MCP server.
  */
-function setupToolHandlers(server: Server): void {
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+function setupToolHandlers(server: McpServer): void {
+  server.server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: [tool],
   }));
 
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  server.server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (request.params.name === tool.name) {
       try {
         const args = request.params.arguments || {};
