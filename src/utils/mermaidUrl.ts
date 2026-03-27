@@ -15,11 +15,14 @@ function encodeMermaidToBase64Url(mermaid: string): string {
 
 /**
  * Creates a public mermaid.ink URL for the given mermaid definition.
+ * The payload must be a JSON object `{ code, mermaid: { theme } }` as expected by mermaid.ink.
  */
 export function createMermaidInkUrl(
   mermaid: string,
   variant: "svg" | "img",
+  theme = "default",
 ): string {
-  const encoded = encodeMermaidToBase64Url(mermaid);
+  const payload = JSON.stringify({ code: mermaid, mermaid: { theme } });
+  const encoded = encodeMermaidToBase64Url(payload);
   return `https://mermaid.ink/${variant}/pako:${encoded}`;
 }
