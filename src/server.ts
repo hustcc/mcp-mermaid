@@ -13,8 +13,7 @@ import {
   startStdioMcpServer,
 } from "./services";
 import { schema, tool } from "./tools";
-import { createMermaidInkUrl, renderMermaid } from "./utils";
-import { Logger } from "./utils/logger";
+import { Logger, createMermaidInkUrl, renderMermaid, withRetry } from "./utils";
 
 /**
  * Creates and configures an MCP server for mermaid generation.
@@ -61,10 +60,17 @@ function setupToolHandlers(server: McpServer): void {
         }
 
         const { mermaid, theme, backgroundColor, outputType = "base64" } = args;
-        const { id, svg, screenshot } = await renderMermaid(
-          mermaid as string,
-          theme as string,
-          backgroundColor as string,
+        Logger.info(
+          `Rendering diagram (outputType=${outputType}, theme=${theme ?? "default"})`,
+        );
+        const { id, svg, screenshot } = await withRetry(
+          () =>
+            renderMermaid(
+              mermaid as string,
+              theme as string,
+              backgroundColor as string,
+            ),
+          { maxAttempts: 3, delayMs: 500 },
         );
 
         if (outputType === "mermaid") {
@@ -147,6 +153,7 @@ function setupToolHandlers(server: McpServer): void {
         };
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } catch (error: any) {
+        Logger.error("Tool execution failed", error);
         if (error instanceof McpError) throw error;
         throw new McpError(
           ErrorCode.InternalError,
