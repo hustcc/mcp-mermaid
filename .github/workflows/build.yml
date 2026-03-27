@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -25,24 +28,8 @@ jobs:
           npm run build
           npx vitest --watch=false
 
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
       - name: MCP Shield scan
         uses: thuggeelya/mcp-shield-action@v1
         with:
           server: 'node build/index.js'
+          sarif: 'false'
