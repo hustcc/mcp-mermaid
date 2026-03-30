@@ -186,3 +186,8 @@ docker run -p 1122:1122 susuperli/mcp-mermaid:latest --transport streamable --po
 ## 📄 License
 
 MIT@[hustcc](https://github.com/hustcc).
+
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/hustcc-mcp-mermaid).
+
