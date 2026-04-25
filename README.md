@@ -4,6 +4,7 @@ Generate <img src="https://mermaid.js.org/favicon.svg" height="14"/> [mermaid](h
 
 - <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ZFK8SrovcqgAAAAAAAAAAAAAemJ7AQ/original" height="14"/> [mcp-server-chart](https://github.com/antvis/mcp-server-chart) to generate chart, graph, map.
 - <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*EdkXSojOxqsAAAAAQHAAAAgAemJ7AQ/original" height="14"/> [Infographic](https://github.com/antvis/Infographic) to generate infographic, such as `Timeline`, `Comparison`, `List`, `Process` and so on.
+- 🖼️ [figure.ling.pub/gallery](https://figure.ling.pub/gallery) to browse and share AI-generated diagrams and figures created with mcp-mermaid and other tools.
 
 
 ## ✨ Features
