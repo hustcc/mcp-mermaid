@@ -20,6 +20,7 @@ export async function renderMermaid(
   mermaid: string,
   theme = "default",
   backgroundColor = "white",
+  look: "classic" | "handDrawn" = "classic",
 ): Promise<RenderResult> {
   if (!renderer) renderer = createMermaidRenderer();
   const cssContent = `svg { background: ${backgroundColor}; }`;
@@ -33,6 +34,8 @@ export async function renderMermaid(
     mermaidConfig: {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       theme: theme as any,
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      look: look as any,
     },
   });
   const r0 = r[0] as PromiseSettledResult<RenderResult>;

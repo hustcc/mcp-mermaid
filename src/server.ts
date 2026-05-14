@@ -59,9 +59,15 @@ function setupToolHandlers(server: McpServer): void {
           );
         }
 
-        const { mermaid, theme, backgroundColor, outputType = "base64" } = args;
+        const {
+          mermaid,
+          theme,
+          look,
+          backgroundColor,
+          outputType = "base64",
+        } = args;
         Logger.info(
-          `Rendering diagram (outputType=${outputType}, theme=${theme ?? "default"})`,
+          `Rendering diagram (outputType=${outputType}, theme=${theme ?? "default"}, look=${look ?? "classic"})`,
         );
         const { id, svg, screenshot } = await withRetry(
           () =>
@@ -69,6 +75,7 @@ function setupToolHandlers(server: McpServer): void {
               mermaid as string,
               theme as string,
               backgroundColor as string,
+              look as "classic" | "handDrawn" | undefined,
             ),
           { maxAttempts: 3, delayMs: 500 },
         );
@@ -99,6 +106,7 @@ function setupToolHandlers(server: McpServer): void {
             mermaid as string,
             variant,
             (theme as string) || "default",
+            (look as "classic" | "handDrawn" | undefined) || "classic",
           );
           return {
             content: [

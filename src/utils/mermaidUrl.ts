@@ -21,8 +21,12 @@ export function createMermaidInkUrl(
   mermaid: string,
   variant: "svg" | "img",
   theme = "default",
+  look: "classic" | "handDrawn" = "classic",
 ): string {
-  const payload = JSON.stringify({ code: mermaid, mermaid: { theme } });
+  const payload = JSON.stringify({
+    code: mermaid,
+    mermaid: { theme, look },
+  });
   const encoded = encodeMermaidToBase64Url(payload);
   return `https://mermaid.ink/${variant}/pako:${encoded}`;
 }
