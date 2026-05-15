@@ -15,6 +15,13 @@ C-->D;.`)
     .describe("Theme for the diagram (optional). Default is 'default'.")
     .optional()
     .default("default"),
+  look: z
+    .enum(["classic", "handDrawn"])
+    .describe(
+      "Visual style for the diagram (optional). 'classic' is the default Mermaid look; 'handDrawn' produces a sketchy, Excalidraw-like rendering (Mermaid v11+).",
+    )
+    .optional()
+    .default("classic"),
   backgroundColor: z
     .string()
     .describe(
