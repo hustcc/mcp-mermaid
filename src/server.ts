@@ -65,7 +65,7 @@ function setupToolHandlers(server: McpServer): void {
           look,
           backgroundColor,
           outputType = "base64",
-        } = args;
+        } = result.data;
         Logger.info(
           `Rendering diagram (outputType=${outputType}, theme=${theme ?? "default"}, look=${look ?? "classic"})`,
         );
