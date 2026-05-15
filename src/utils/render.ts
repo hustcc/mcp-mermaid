@@ -32,9 +32,9 @@ export async function renderMermaid(
     screenshot: true,
     css: cssTmpPath,
     mermaidConfig: {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: Mermaid accepts string theme values here, but the renderer boundary does not expose a precise type for this config property.
       theme: theme as any,
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: Mermaid accepts "classic" | "handDrawn" for `look`, but the renderer boundary does not expose a precise type for this config property.
       look: look as any,
     },
   });
