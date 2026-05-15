@@ -15,7 +15,8 @@ function encodeMermaidToBase64Url(mermaid: string): string {
 
 /**
  * Creates a public mermaid.ink URL for the given mermaid definition.
- * The payload must be a JSON object `{ code, mermaid: { theme } }` as expected by mermaid.ink.
+ * The payload is a JSON object `{ code, mermaid: { theme, look } }` as expected by mermaid.ink.
+ * `look` defaults to `"classic"`; pass `"handDrawn"` for a sketch-style rendering.
  */
 export function createMermaidInkUrl(
   mermaid: string,
