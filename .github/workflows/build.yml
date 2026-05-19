@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -24,3 +27,8 @@ jobs:
           npm install
           npm run build
           npx vitest --watch=false
+
+      - name: MCP Shield scan
+        uses: thuggeelya/mcp-shield-action@v1
+        with:
+          server: 'node build/index.js'
