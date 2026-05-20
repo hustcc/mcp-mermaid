@@ -60,9 +60,9 @@ Also, you can use it on aliyun, modelscope, glama.ai, smithery.ai or others with
 - SSE: `http://localhost:3033/sse`
 - Streamable: `http://localhost:1122/mcp`
 
-**Available Docker Tags:**
-- `susuperli/mcp-mermaid:latest` - Latest stable version
-- View all available tags at [Docker Hub](https://hub.docker.com/repository/docker/susuperli/mcp-mermaid/tags)
+**Available Docker Images:**
+- `ghcr.io/hustcc/mcp-mermaid:latest` - Latest stable version (GitHub Container Registry)
+- View all available tags at [GitHub Container Registry](https://github.com/hustcc/mcp-mermaid/pkgs/container/mcp-mermaid)
 
 
 ## 🚰 Run with SSE or Streamable transport
@@ -175,13 +175,32 @@ Run MCP Mermaid with Docker:
 
 ```bash
 # Pull the image
-docker pull susuperli/mcp-mermaid:latest
+docker pull ghcr.io/hustcc/mcp-mermaid:latest
 
 # Run with SSE transport (default)
-docker run -p 3033:3033 susuperli/mcp-mermaid:latest --transport sse
+docker run -p 3033:3033 ghcr.io/hustcc/mcp-mermaid:latest
 
 # Run with streamable transport
-docker run -p 1122:1122 susuperli/mcp-mermaid:latest --transport streamable --port 1122
+docker run -p 1122:1122 ghcr.io/hustcc/mcp-mermaid:latest --transport streamable --port 1122
+```
+
+Use it as an MCP server over SSE in your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "mcp-mermaid": {
+      "url": "http://localhost:3033/sse"
+    }
+  }
+}
+```
+
+To build the image locally from source:
+
+```bash
+docker build -t mcp-mermaid .
+docker run -p 3033:3033 mcp-mermaid
 ```
 
 ## 📄 License
